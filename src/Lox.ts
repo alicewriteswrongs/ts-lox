@@ -2,11 +2,7 @@ import { readFileSync } from "fs"
 import { prompt } from "enquirer"
 
 class Lox {
-  hadError: boolean
-
-  constructor() {
-    this.hadError = false
-  }
+  hadError: boolean = false
 
   main() {
     let args = process.argv
