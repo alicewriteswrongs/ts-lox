@@ -1,3 +1,9 @@
-# Crafting Interpreters
+# ts-lox
 
-Code and whatnot from reading through the book.
+This is my TypeScript implementation of the JLox tree-walk interpreter for the Lox programming language, as presented in [Crafting Interpreters](https://craftinginterpreters.com/).
+
+Run it by doing:
+
+```sh
+./do run
+```

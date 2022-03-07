@@ -1,6 +1,6 @@
 import { readFileSync } from "fs"
 import { prompt } from "enquirer"
-import {Scanner} from "./Scanner"
+import { Scanner } from "./Scanner"
 
 export class Lox {
   main() {
@@ -41,8 +41,8 @@ export class Lox {
     let scanner = new Scanner(source)
     let tokens = scanner.scanTokens()
 
-    tokens.forEach(token => {
-      console.log(token);
+    tokens.forEach((token) => {
+      console.log(token)
     })
   }
 
@@ -56,15 +56,14 @@ export class Lox {
   }
 }
 
-export function  error(line: number, message: string) {
-    report(line, "", message)
-  }
+export function error(line: number, message: string) {
+  report(line, "", message)
+}
 
 export function report(line: number, where: string, message: string) {
   console.error(`[line ${line}]: Error${where}: ${message}`)
   global.hadError = true
 }
-
 
 const lox = new Lox()
 lox.main()

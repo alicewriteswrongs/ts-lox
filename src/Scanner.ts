@@ -1,5 +1,5 @@
-import {error} from "./Lox"
-import {Token, TokenType} from "./Token"
+import { error } from "./Lox"
+import { Token, TokenType } from "./Token"
 
 export class Scanner {
   source: string = ""
@@ -20,12 +20,7 @@ export class Scanner {
       this.scanToken()
     }
 
-    this.tokens.push(new Token(
-      TokenType.EOF,
-      "",
-      "",
-      this.#line
-    ))
+    this.tokens.push(new Token(TokenType.EOF, "", "", this.#line))
     return this.tokens
   }
 
@@ -34,16 +29,8 @@ export class Scanner {
   }
 
   addToken(type: TokenType, literal?: string) {
-    let text = this.source.slice(
-      this.#start,
-      this.#current
-    )
-    this.tokens.push(new Token(
-      type,
-      text,
-      literal ?? "",
-      this.#line
-    ))
+    let text = this.source.slice(this.#start, this.#current)
+    this.tokens.push(new Token(type, text, literal ?? "", this.#line))
   }
 
   advance(): string {
@@ -54,36 +41,57 @@ export class Scanner {
     let c = this.advance()
 
     switch (c) {
-      case '(': this.addToken(TokenType.LEFT_PAREN); break;
-      case ')': this.addToken(TokenType.RIGHT_PAREN); break;
-      case '{': this.addToken(TokenType.LEFT_BRACE); break;
-      case '}': this.addToken(TokenType.RIGHT_BRACE); break;
-      case ',': this.addToken(TokenType.COMMA); break;
-      case '.': this.addToken(TokenType.DOT); break;
-      case '-': this.addToken(TokenType.MINUS); break;
-      case '+': this.addToken(TokenType.PLUS); break;
-      case ';': this.addToken(TokenType.SEMICOLON); break;
-      case '*': this.addToken(TokenType.STAR); break; 
-      case '!': {
+      case "(":
+        this.addToken(TokenType.LEFT_PAREN)
+        break
+      case ")":
+        this.addToken(TokenType.RIGHT_PAREN)
+        break
+      case "{":
+        this.addToken(TokenType.LEFT_BRACE)
+        break
+      case "}":
+        this.addToken(TokenType.RIGHT_BRACE)
+        break
+      case ",":
+        this.addToken(TokenType.COMMA)
+        break
+      case ".":
+        this.addToken(TokenType.DOT)
+        break
+      case "-":
+        this.addToken(TokenType.MINUS)
+        break
+      case "+":
+        this.addToken(TokenType.PLUS)
+        break
+      case ";":
+        this.addToken(TokenType.SEMICOLON)
+        break
+      case "*":
+        this.addToken(TokenType.STAR)
+        break
+      case "!": {
+        this.addToken(this.match("=") ? TokenType.BANG_EQUAL : TokenType.BANG)
+        break
+      }
+      case "=": {
+        this.addToken(this.match("=") ? TokenType.EQUAL_EQUAL : TokenType.EQUAL)
+        break
+      }
+      case "<": {
+        this.addToken(this.match("=") ? TokenType.LESS_EQUAL : TokenType.LESS)
+        break
+      }
+      case ">": {
         this.addToken(
-          this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-        break;
-      }
-      case '=': {
-        this.addToken(this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
-        break;
-      }
-      case '<': {
-        this.addToken(this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
-        break;
-      }
-      case '>': {
-        this.addToken(this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-        break;
+          this.match("=") ? TokenType.GREATER_EQUAL : TokenType.GREATER
+        )
+        break
       }
       case "/": {
         if (this.match("/")) {
-          while (this.peek() != '\n' && !this.isAtEnd()) {
+          while (this.peek() != "\n" && !this.isAtEnd()) {
             this.advance()
           }
         } else {
@@ -91,18 +99,17 @@ export class Scanner {
         }
         break
       }
-      case ' ':
-      case '\r':
-      case '\t':
+      case " ":
+      case "\r":
+      case "\t":
         // Ignore whitespace.
-        break;
-      case '\n':
-        this.#line++;
-        break;
+        break
+      case "\n":
+        this.#line++
+        break
       default: {
         error(this.#line, `Unexpected character: ${c}`)
       }
-
     }
   }
 
@@ -128,7 +135,7 @@ export class Scanner {
    */
   peek(): string {
     if (this.isAtEnd()) {
-      return '\0'
+      return "\0"
     }
     return this.source.charAt(this.#current)
   }
@@ -136,4 +143,3 @@ export class Scanner {
 
 let scanner = new Scanner("foo")
 scanner
-
