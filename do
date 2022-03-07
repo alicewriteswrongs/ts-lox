@@ -13,7 +13,7 @@ function run {
 }
 
 function fmt {
-    yarn prettier --write src/**/*.ts
+    yarn prettier --no-semi --write src/**/*.ts
 }
 
 "$@"
