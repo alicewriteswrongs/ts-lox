@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Alice Pote <alice.writes.wrongs@gmail.com>",
   "dependencies": {
+    "@types/node": "^17.0.21",
+    "enquirer": "^2.3.6",
+    "prettier": "^2.5.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.2"
   }

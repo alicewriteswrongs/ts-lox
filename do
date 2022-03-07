@@ -9,7 +9,11 @@ function ts:watch {
 }
 
 function run {
-    yarn ts-node src/index.ts
+    yarn ts-node src/Lox.ts
+}
+
+function fmt {
+    yarn prettier --write src/**/*.ts
 }
 
 "$@"
