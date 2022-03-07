@@ -1,0 +1,10 @@
+{
+  "name": "tslox",
+  "version": "1.0.0",
+  "description": "TypeScript implementation of the tree-walk interpreter for the Lox language (from Crafting Interpreters)",
+  "main": "index.js",
+  "author": "Alice Pote <alice.writes.wrongs@gmail.com>",
+  "dependencies": {
+    "typescript": "^4.6.2"
+  }
+}
