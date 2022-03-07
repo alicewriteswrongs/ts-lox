@@ -1,9 +1,8 @@
 import { readFileSync } from "fs"
 import { prompt } from "enquirer"
+import {Scanner} from "./Scanner"
 
-class Lox {
-  hadError: boolean = false
-
+export class Lox {
   main() {
     let args = process.argv
     if (args.length > 3) {
@@ -19,7 +18,7 @@ class Lox {
   runFile(path: string) {
     let contents = String(readFileSync(path))
     this.run(contents)
-    if (this.hadError) {
+    if (global.hadError) {
       process.exit(65)
     }
   }
@@ -33,18 +32,18 @@ class Lox {
         name: "input",
       })
       this.run(input)
-      this.hadError = false
+      global.hadError = false
     }
   }
 
   run(source: string) {
     console.log(`running ${source}`)
-    // let scanner = new Scanner(source)
-    // let tokens = scanner.scanTokens()
+    let scanner = new Scanner(source)
+    let tokens = scanner.scanTokens()
 
-    // tokens.forEach(token => {
-    //   console.log(token);
-    // })
+    tokens.forEach(token => {
+      console.log(token);
+    })
   }
 
   error(line: number, message: string) {
@@ -53,9 +52,19 @@ class Lox {
 
   report(line: number, where: string, message: string) {
     console.error(`[line ${line}]: Error${where}: ${message}`)
-    this.hadError = true
+    global.hadError = true
   }
 }
+
+export function  error(line: number, message: string) {
+    report(line, "", message)
+  }
+
+export function report(line: number, where: string, message: string) {
+  console.error(`[line ${line}]: Error${where}: ${message}`)
+  global.hadError = true
+}
+
 
 const lox = new Lox()
 lox.main()

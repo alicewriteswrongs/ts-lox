@@ -1,6 +1,7 @@
-import {Token, TokenType} from "./TokenType"
+import {error} from "./Lox"
+import {Token, TokenType} from "./Token"
 
-class Scanner {
+export class Scanner {
   source: string = ""
   tokens: Token[] = []
 
@@ -22,17 +23,17 @@ class Scanner {
     this.tokens.push(new Token(
       TokenType.EOF,
       "",
-      {},
+      "",
       this.#line
     ))
     return this.tokens
   }
 
   isAtEnd(): boolean {
-    return this.#current >= this.source.length()
+    return this.#current >= this.source.length
   }
 
-  addToken(type: TokenType, literal?: Object) {
+  addToken(type: TokenType, literal?: string) {
     let text = this.source.slice(
       this.#start,
       this.#current
@@ -40,7 +41,7 @@ class Scanner {
     this.tokens.push(new Token(
       type,
       text,
-      literal,
+      literal ?? "",
       this.#line
     ))
   }
@@ -63,7 +64,73 @@ class Scanner {
       case '+': this.addToken(TokenType.PLUS); break;
       case ';': this.addToken(TokenType.SEMICOLON); break;
       case '*': this.addToken(TokenType.STAR); break; 
+      case '!': {
+        this.addToken(
+          this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+        break;
+      }
+      case '=': {
+        this.addToken(this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+        break;
+      }
+      case '<': {
+        this.addToken(this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+        break;
+      }
+      case '>': {
+        this.addToken(this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+        break;
+      }
+      case "/": {
+        if (this.match("/")) {
+          while (this.peek() != '\n' && !this.isAtEnd()) {
+            this.advance()
+          }
+        } else {
+          this.addToken(TokenType.SLASH)
+        }
+        break
+      }
+      case ' ':
+      case '\r':
+      case '\t':
+        // Ignore whitespace.
+        break;
+      case '\n':
+        this.#line++;
+        break;
+      default: {
+        error(this.#line, `Unexpected character: ${c}`)
+      }
+
     }
+  }
+
+  /**
+   * Match is like a conditional advance we can use to check for
+   * a lexeme which is more than one character
+   */
+  match(expected: string): boolean {
+    if (this.isAtEnd()) {
+      return false
+    }
+    if (this.source.charAt(this.#current) != expected) {
+      // our two-character thingy hasn't matched!
+      return false
+    }
+    // we matched, so increment current and return true
+    this.#current++
+    return true
+  }
+
+  /**
+   * Just look one spot ahead!
+   */
+  peek(): string {
+    if (this.isAtEnd()) {
+      return '\0'
+    }
+    return this.source.charAt(this.#current)
   }
 }
 
