@@ -1,6 +1,25 @@
 import { error } from "./Lox"
 import { Token, TokenType } from "./Token"
 
+const KEYWORDS: Record<string, TokenType> = {
+  and: TokenType.AND,
+  class: TokenType.CLASS,
+  else: TokenType.ELSE,
+  false: TokenType.FALSE,
+  for: TokenType.FOR,
+  fun: TokenType.FUN,
+  if: TokenType.IF,
+  nil: TokenType.NIL,
+  or: TokenType.OR,
+  print: TokenType.PRINT,
+  return: TokenType.RETURN,
+  super: TokenType.SUPER,
+  this: TokenType.THIS,
+  true: TokenType.TRUE,
+  var: TokenType.VAR,
+  while: TokenType.WHILE,
+}
+
 export class Scanner {
   source: string = ""
   tokens: Token[] = []
@@ -28,7 +47,7 @@ export class Scanner {
     return this.#current >= this.source.length
   }
 
-  addToken(type: TokenType, literal?: string) {
+  addToken(type: TokenType, literal?: string | number) {
     let text = this.source.slice(this.#start, this.#current)
     this.tokens.push(new Token(type, text, literal ?? "", this.#line))
   }
@@ -107,10 +126,71 @@ export class Scanner {
       case "\n":
         this.#line++
         break
+      case '"':
+        this.string()
+        break
       default: {
-        error(this.#line, `Unexpected character: ${c}`)
+        if (this.isDigit(c)) {
+          this.number()
+        } else if (this.isAlpha(c)) {
+          this.identifier()
+        } else {
+          error(this.#line, `Unexpected character: ${c}`)
+        }
       }
     }
+  }
+
+  identifier() {
+    while (this.isAlphaNumeric(this.peek())) {
+      this.advance()
+    }
+
+    let text = this.source.substring(this.#start, this.#current)
+
+    this.addToken(KEYWORDS[text] ?? TokenType.IDENTIFIER)
+  }
+
+  number() {
+    while (this.isDigit(this.peek())) {
+      this.advance()
+    }
+
+    if (this.peek() == "." && this.isDigit(this.peekNext())) {
+      this.advance()
+      while (this.isDigit(this.peek())) {
+        this.advance()
+      }
+
+      this.addToken(
+        TokenType.NUMBER,
+        Number(this.source.slice(this.#start, this.#current))
+      )
+    }
+  }
+
+  /**
+   * Produce a token for a string literal
+   */
+  string() {
+    while (this.peek() != '"' && !this.isAtEnd()) {
+      if (this.peek() == "\n") {
+        this.#line++
+      }
+      this.advance()
+    }
+
+    if (this.isAtEnd()) {
+      error(this.#line, "Unterminated string.")
+      return
+    }
+
+    // The closing ".
+    this.advance()
+
+    // Trim the surrounding quotes.
+    let value = this.source.slice(this.#start + 1, this.#current - 1)
+    this.addToken(TokenType.STRING, value)
   }
 
   /**
@@ -138,6 +218,25 @@ export class Scanner {
       return "\0"
     }
     return this.source.charAt(this.#current)
+  }
+
+  peekNext(): string {
+    if (this.#current + 1 >= this.source.length) {
+      return "\0"
+    }
+    return this.source.charAt(this.#current + 1)
+  }
+
+  isAlpha(c: string): boolean {
+    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c == "_"
+  }
+
+  isAlphaNumeric(c: string): boolean {
+    return this.isAlpha(c) || this.isDigit(c)
+  }
+
+  isDigit(c: string) {
+    return c >= "0" && c <= "9"
   }
 }
 
