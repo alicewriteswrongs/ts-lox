@@ -1,3 +1,3 @@
 export interface ErrorFunc {
-  (line: number, msg: string): void
+  (line: number, msg: string): void;
 }

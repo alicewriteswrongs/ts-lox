@@ -1,5 +1,5 @@
 import { Token, TokenType } from "./Token.ts";
-import { ErrorFunc } from './types/error.ts';
+import { ErrorFunc } from "./types/error.ts";
 
 const KEYWORDS: Record<string, TokenType> = {
   and: TokenType.AND,
@@ -23,16 +23,16 @@ const KEYWORDS: Record<string, TokenType> = {
 export class Scanner {
   source = "";
   tokens: Token[] = [];
-  error: ErrorFunc
+  error: ErrorFunc;
 
   // private fields
   #start = 0;
-  #current= 0;
-  #line= 1;
+  #current = 0;
+  #line = 1;
 
   constructor(source: string, error: ErrorFunc) {
     this.source = source;
-    this.error = error
+    this.error = error;
   }
 
   scanTokens(): Token[] {

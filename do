@@ -1,19 +1,15 @@
 #!/bin/bash
 
-function ts {
-    yarn tsc --noEmit
-}
-
-function ts:watch {
-    yarn tsc --noEmit --watch
+function lint {
+    deno lint src
 }
 
 function run {
-    yarn ts-node src/Lox.ts
+    deno run src/Lox.ts
 }
 
 function fmt {
-    yarn prettier --no-semi --write src/*.ts src/**/*.ts
+    deno fmt src
 }
 
 "$@"

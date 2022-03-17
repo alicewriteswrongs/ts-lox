@@ -1,13 +1,13 @@
 import { Scanner } from "./Scanner.ts";
 
 export class Lox {
-  hadError = false
+  hadError = false;
 
   main() {
-    const args = Deno.args
+    const args = Deno.args;
     if (args.length > 3) {
       console.log("Usage: tslox [script]");
-      Deno.exit(64)
+      Deno.exit(64);
     } else if (args.length === 3) {
       this.runFile(args[2]);
     } else {
@@ -16,7 +16,7 @@ export class Lox {
   }
 
   async runFile(path: string) {
-    const contents = await Deno.readTextFile(path)
+    const contents = await Deno.readTextFile(path);
     this.run(contents);
     if (this.hadError) {
       Deno.exit(65);
@@ -25,7 +25,7 @@ export class Lox {
 
   runPrompt() {
     while (true) {
-      const input = prompt(">")
+      const input = prompt(">");
       this.run(input ?? "");
       this.hadError = false;
     }
