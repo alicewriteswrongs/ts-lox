@@ -1,13 +1,13 @@
-import { readFileSync } from "fs";
-import { prompt } from "enquirer";
 import { Scanner } from "./Scanner.ts";
 
 export class Lox {
+  hadError = false
+
   main() {
-    let args = process.argv;
+    const args = Deno.args
     if (args.length > 3) {
       console.log("Usage: tslox [script]");
-      process.exit(64);
+      Deno.exit(64)
     } else if (args.length === 3) {
       this.runFile(args[2]);
     } else {
@@ -15,31 +15,26 @@ export class Lox {
     }
   }
 
-  runFile(path: string) {
-    let contents = String(readFileSync(path));
+  async runFile(path: string) {
+    const contents = await Deno.readTextFile(path)
     this.run(contents);
-    if (global.hadError) {
-      process.exit(65);
+    if (this.hadError) {
+      Deno.exit(65);
     }
   }
 
-  async runPrompt() {
+  runPrompt() {
     while (true) {
-      // @ts-ignore
-      let { input } = await prompt({
-        type: "input",
-        message: "",
-        name: "input",
-      });
-      this.run(input);
-      global.hadError = false;
+      const input = prompt(">")
+      this.run(input ?? "");
+      this.hadError = false;
     }
   }
 
   run(source: string) {
     console.log(`running ${source}`);
-    let scanner = new Scanner(source);
-    let tokens = scanner.scanTokens();
+    const scanner = new Scanner(source, this.error);
+    const tokens = scanner.scanTokens();
 
     tokens.forEach((token) => {
       console.log(token);
@@ -52,17 +47,8 @@ export class Lox {
 
   report(line: number, where: string, message: string) {
     console.error(`[line ${line}]: Error${where}: ${message}`);
-    global.hadError = true;
+    this.hadError = true;
   }
-}
-
-export function error(line: number, message: string) {
-  report(line, "", message);
-}
-
-export function report(line: number, where: string, message: string) {
-  console.error(`[line ${line}]: Error${where}: ${message}`);
-  global.hadError = true;
 }
 
 const lox = new Lox();

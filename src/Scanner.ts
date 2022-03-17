@@ -1,5 +1,5 @@
-import { error } from "./Lox.ts";
 import { Token, TokenType } from "./Token.ts";
+import { ErrorFunc } from './types/error.ts';
 
 const KEYWORDS: Record<string, TokenType> = {
   and: TokenType.AND,
@@ -21,16 +21,18 @@ const KEYWORDS: Record<string, TokenType> = {
 };
 
 export class Scanner {
-  source: string = "";
+  source = "";
   tokens: Token[] = [];
+  error: ErrorFunc
 
   // private fields
-  #start: number = 0;
-  #current: number = 0;
-  #line: number = 1;
+  #start = 0;
+  #current= 0;
+  #line= 1;
 
-  constructor(source: string) {
+  constructor(source: string, error: ErrorFunc) {
     this.source = source;
+    this.error = error
   }
 
   scanTokens(): Token[] {
@@ -48,7 +50,7 @@ export class Scanner {
   }
 
   addToken(type: TokenType, literal?: string | number) {
-    let text = this.source.slice(this.#start, this.#current);
+    const text = this.source.slice(this.#start, this.#current);
     this.tokens.push(new Token(type, text, literal ?? "", this.#line));
   }
 
@@ -57,7 +59,7 @@ export class Scanner {
   }
 
   scanToken() {
-    let c = this.advance();
+    const c = this.advance();
 
     switch (c) {
       case "(":
@@ -137,7 +139,7 @@ export class Scanner {
         } else if (this.isAlpha(c)) {
           this.identifier();
         } else {
-          error(this.#line, `Unexpected character: ${c}`);
+          this.error(this.#line, `Unexpected character: ${c}`);
         }
       }
     }
@@ -148,7 +150,7 @@ export class Scanner {
       this.advance();
     }
 
-    let text = this.source.substring(this.#start, this.#current);
+    const text = this.source.substring(this.#start, this.#current);
 
     this.addToken(KEYWORDS[text] ?? TokenType.IDENTIFIER);
   }
@@ -183,7 +185,7 @@ export class Scanner {
     }
 
     if (this.isAtEnd()) {
-      error(this.#line, "Unterminated string.");
+      this.error(this.#line, "Unterminated string.");
       return;
     }
 
@@ -191,7 +193,7 @@ export class Scanner {
     this.advance();
 
     // Trim the surrounding quotes.
-    let value = this.source.slice(this.#start + 1, this.#current - 1);
+    const value = this.source.slice(this.#start + 1, this.#current - 1);
     this.addToken(TokenType.STRING, value);
   }
 
