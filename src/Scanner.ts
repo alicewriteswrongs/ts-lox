@@ -239,6 +239,3 @@ export class Scanner {
     return c >= "0" && c <= "9"
   }
 }
-
-let scanner = new Scanner("foo")
-scanner
