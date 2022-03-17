@@ -1,5 +1,5 @@
-import Lox from "../index"
+import Lox from "../index.ts";
 
 declare global {
-  var hadError: boolean
+  var hadError: boolean;
 }
