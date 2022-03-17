@@ -9,3 +9,5 @@ Run it by doing:
 ```sh
 ./do run
 ```
+
+The only dependency is Deno.
