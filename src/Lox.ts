@@ -33,7 +33,10 @@ export class Lox {
 
   run(source: string) {
     console.log(`running ${source}`);
-    const scanner = new Scanner(source, this.error);
+    const scanner = new Scanner(
+      source,
+      (line: number, message: string) => this.error(line, message),
+    );
     const tokens = scanner.scanTokens();
 
     tokens.forEach((token) => {
