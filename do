@@ -9,7 +9,12 @@ function run {
 }
 
 function fmt {
-    deno fmt src
+    deno fmt src tool
+}
+
+function generate_ast {
+    deno run tool/GenerateAst.ts src
+    fmt
 }
 
 "$@"
