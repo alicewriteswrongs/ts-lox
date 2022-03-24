@@ -80,7 +80,7 @@ function defineType(
   lines.push(fieldList);
   lines.push(`): ${typeName} {`);
 
-  lines.push(`const new${typeName} = {`);
+  lines.push(`const new${typeName}: ${typeName} = {`);
   fieldList.split(",").forEach((field) => {
     const name = field.split(":")[0].trim();
 

@@ -1,1 +1,1 @@
-export type LiteralValue = string | number;
+export type LiteralValue = string | number | null;

@@ -1,13 +1,15 @@
+import { LiteralValue } from "./Literal.ts";
+
 export class Token {
   type: TokenType;
   lexeme: string;
-  literal: string | number;
+  literal: LiteralValue;
   line: number;
 
   constructor(
     type: TokenType,
     lexeme: string,
-    literal: string | number,
+    literal: LiteralValue,
     line: number,
   ) {
     this.type = type;

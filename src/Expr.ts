@@ -21,7 +21,7 @@ export function createBinary(
   operator: Token,
   right: Expr,
 ): Binary {
-  const newBinary = {
+  const newBinary: Binary = {
     left,
     operator,
     right,
@@ -44,7 +44,7 @@ export interface Grouping {
 export function createGrouping(
   expression: Expr,
 ): Grouping {
-  const newGrouping = {
+  const newGrouping: Grouping = {
     expression,
     exprType: "Grouping",
   };
@@ -65,7 +65,7 @@ export interface Literal {
 export function createLiteral(
   value: LiteralValue,
 ): Literal {
-  const newLiteral = {
+  const newLiteral: Literal = {
     value,
     exprType: "Literal",
   };
@@ -89,7 +89,7 @@ export function createUnary(
   operator: Token,
   right: Expr,
 ): Unary {
-  const newUnary = {
+  const newUnary: Unary = {
     operator,
     right,
     exprType: "Unary",
