@@ -10,7 +10,7 @@ function main() {
     defineAst(outputDir, "Expr", [
       "Binary   | left: Expr, operator: Token, right: Expr",
       "Grouping | expression: Expr",
-      "Literal  | value: Object",
+      "Literal  | value: LiteralValue",
       "Unary    | operator: Token, right: Expr",
     ]);
   }
@@ -26,6 +26,7 @@ function defineAst(
   const lines: string[] = [];
 
   lines.push('import { Token } from "./Token.ts"');
+  lines.push('import { LiteralValue } from "./Literal.ts"');
   lines.push("");
 
   types.forEach((typeString) => {

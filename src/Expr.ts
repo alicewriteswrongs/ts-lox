@@ -1,4 +1,5 @@
 import { Token } from "./Token.ts";
+import { LiteralValue } from "./Literal.ts";
 
 export interface Binary {
   left: Expr;
@@ -47,17 +48,17 @@ export function createGrouping(
 }
 
 export interface Literal {
-  value: Object;
+  value: LiteralValue;
 }
 
 /**
  * Factory function for creating a Literal record
  *
  * Arguments:
- * value: Object
+ * value: LiteralValue
  */
 export function createLiteral(
-  value: Object,
+  value: LiteralValue,
 ): Literal {
   const newLiteral = {
     value,

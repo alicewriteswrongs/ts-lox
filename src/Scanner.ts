@@ -49,7 +49,7 @@ export class Scanner {
     return this.#current >= this.source.length;
   }
 
-  addToken(type: TokenType, literal?: string | number) {
+  addToken(type: TokenType, literal?: LiteralValue) {
     const text = this.source.slice(this.#start, this.#current);
     this.tokens.push(new Token(type, text, literal ?? "", this.#line));
   }
