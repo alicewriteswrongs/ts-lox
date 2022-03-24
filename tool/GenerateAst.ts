@@ -23,45 +23,69 @@ function defineAst(
 ) {
   const path = outputDir + "/" + baseName + ".ts";
 
-  const fileContents: string[] = [];
+  const lines: string[] = [];
 
-  fileContents.push(`abstract class ${baseName} {`);
-  fileContents.push("}");
-  fileContents.push("");
+  lines.push('import { Token } from "./Token.ts"');
+  lines.push("");
 
   types.forEach((typeString) => {
-    const [className, fields] = typeString.split("|").map((str) => str.trim());
+    const [typeName, fields] = typeString.split("|").map((str) => str.trim());
     defineType(
-      fileContents,
-      baseName,
-      className,
+      lines,
+      typeName,
       fields,
     );
   });
 
+  lines.push(`type ${baseName} =`);
+  types.forEach((typeString) => {
+    const [typeName] = typeString.split("|").map((str) => str.trim());
+    lines.push(`| ${typeName}`);
+  });
+
   const encoder = new TextEncoder();
-  Deno.writeFileSync(path, encoder.encode(fileContents.join("\n")));
+  Deno.writeFileSync(path, encoder.encode(lines.join("\n")));
 }
 
 function defineType(
   lines: string[],
-  baseName: string,
-  className: string,
+  typeName: string,
   fieldList: string,
 ) {
-  lines.push(`export class ${className} extends ${baseName} {`);
-  // add types for instance fields
-  fieldList.split(",").forEach((f) => lines.push(f));
-  lines.push("");
-
-  // write the constructor
-  lines.push(`constructor (${fieldList}) {`);
-  lines.push("super()");
+  // write the interface declaration
+  lines.push(`export interface ${typeName} {`);
   fieldList.split(",").forEach((field) => {
-    const name = field.split(":")[0];
-    lines.push(`this.${name} = ${name}`);
+    lines.push(field);
   });
   lines.push("}");
+  lines.push("");
+  /**
+   * description
+   */
+
+  // add a factory function
+  lines.push("/**");
+  lines.push(` * Factory function for creating a ${typeName} record`);
+  lines.push(" *");
+  lines.push(" * Arguments:");
+  fieldList.split(",").forEach((field) => {
+    const [name, type] = field.split(":").map((str) => str.trim());
+    lines.push(` * ${name}: ${type}`);
+  });
+  lines.push(" */");
+
+  lines.push(`export function create${typeName} (`);
+  lines.push(fieldList);
+  lines.push(`): ${typeName} {`);
+
+  lines.push(`const new${typeName} = {`);
+  fieldList.split(",").forEach((field) => {
+    const name = field.split(":")[0].trim();
+
+    lines.push(`${name},`);
+  });
+  lines.push("}");
+  lines.push(`return new${typeName}`);
   lines.push("}");
   lines.push("");
 }
