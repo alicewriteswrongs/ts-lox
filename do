@@ -13,7 +13,7 @@ function fmt {
 }
 
 function generate_ast {
-    deno run tool/GenerateAst.ts src
+    deno run --allow-write tool/GenerateAst.ts src
     fmt
 }
 
