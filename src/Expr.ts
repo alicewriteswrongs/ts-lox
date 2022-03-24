@@ -5,6 +5,7 @@ export interface Binary {
   left: Expr;
   operator: Token;
   right: Expr;
+  exprType: "Binary";
 }
 
 /**
@@ -24,12 +25,14 @@ export function createBinary(
     left,
     operator,
     right,
+    exprType: "Binary",
   };
   return newBinary;
 }
 
 export interface Grouping {
   expression: Expr;
+  exprType: "Grouping";
 }
 
 /**
@@ -43,12 +46,14 @@ export function createGrouping(
 ): Grouping {
   const newGrouping = {
     expression,
+    exprType: "Grouping",
   };
   return newGrouping;
 }
 
 export interface Literal {
   value: LiteralValue;
+  exprType: "Literal";
 }
 
 /**
@@ -62,6 +67,7 @@ export function createLiteral(
 ): Literal {
   const newLiteral = {
     value,
+    exprType: "Literal",
   };
   return newLiteral;
 }
@@ -69,6 +75,7 @@ export function createLiteral(
 export interface Unary {
   operator: Token;
   right: Expr;
+  exprType: "Unary";
 }
 
 /**
@@ -85,11 +92,12 @@ export function createUnary(
   const newUnary = {
     operator,
     right,
+    exprType: "Unary",
   };
   return newUnary;
 }
 
-type Expr =
+export type Expr =
   | Binary
   | Grouping
   | Literal

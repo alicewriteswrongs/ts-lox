@@ -38,7 +38,7 @@ function defineAst(
     );
   });
 
-  lines.push(`type ${baseName} =`);
+  lines.push(`export type ${baseName} =`);
   types.forEach((typeString) => {
     const [typeName] = typeString.split("|").map((str) => str.trim());
     lines.push(`| ${typeName}`);
@@ -58,6 +58,7 @@ function defineType(
   fieldList.split(",").forEach((field) => {
     lines.push(field);
   });
+  lines.push(`exprType: "${typeName}"`);
   lines.push("}");
   lines.push("");
   /**
@@ -85,6 +86,7 @@ function defineType(
 
     lines.push(`${name},`);
   });
+  lines.push(`exprType: "${typeName}"`);
   lines.push("}");
   lines.push(`return new${typeName}`);
   lines.push("}");
