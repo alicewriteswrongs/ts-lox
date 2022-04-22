@@ -1,4 +1,4 @@
-import { LiteralValue } from "./Literal.ts";
+import { LiteralValue } from "./Literal";
 
 export class Token {
   type: TokenType;

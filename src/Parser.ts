@@ -4,9 +4,9 @@ import {
   createLiteral,
   createUnary,
   Expr,
-} from "./Expr.ts";
-import { Token, TokenType } from "./Token.ts";
-import { ErrorFunc } from "./types/error.ts";
+} from "./Expr";
+import { Token, TokenType } from "./Token";
+import { ErrorFunc } from "./types/error";
 
 /**
  * This Parser is where the grammar for Lox is really implemented. We

@@ -1,5 +1,5 @@
-import { Token } from "./Token.ts";
-import { LiteralValue } from "./Literal.ts";
+import { Token } from "./Token";
+import { LiteralValue } from "./Literal";
 
 export interface Binary {
   left: Expr;

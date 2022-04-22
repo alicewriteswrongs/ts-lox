@@ -1,15 +1,16 @@
-import { printAST } from "./AstPrinter.ts";
-import Parser from "./Parser.ts";
-import { Scanner } from "./Scanner.ts";
+import { printAST } from "./AstPrinter";
+import Parser from "./Parser";
+import { Scanner } from "./Scanner";
+import { readFile } from "fs/promises"
 
 export class Lox {
   hadError = false;
 
   main() {
-    const args = Deno.args;
+    const args = process.argv;
     if (args.length > 3) {
       console.log("Usage: tslox [script]");
-      Deno.exit(64);
+      process.exit(64);
     } else if (args.length === 3) {
       this.runFile(args[2]);
     } else {
@@ -18,10 +19,10 @@ export class Lox {
   }
 
   async runFile(path: string) {
-    const contents = await Deno.readTextFile(path);
-    this.run(contents);
+    const contents = await readFile(path);
+    this.run(String(contents));
     if (this.hadError) {
-      Deno.exit(65);
+      process.exit(65);
     }
   }
 

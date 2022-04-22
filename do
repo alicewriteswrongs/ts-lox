@@ -5,7 +5,7 @@ function lint {
 }
 
 function run {
-    deno run src/Lox.ts
+    ts-node src/Lox.ts
 }
 
 function fmt {
@@ -13,7 +13,7 @@ function fmt {
 }
 
 function generate_ast {
-    deno run --allow-write tool/GenerateAst.ts src
+    ts-node tool/GenerateAst.ts src
     fmt
 }
 

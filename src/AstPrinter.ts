@@ -1,4 +1,4 @@
-import { Expr } from "./Expr.ts";
+import { Expr } from "./Expr";
 
 export function printAST(expr: Expr) {
   switch (expr.exprType) {

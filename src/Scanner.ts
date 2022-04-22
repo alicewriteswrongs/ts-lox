@@ -1,6 +1,6 @@
-import { LiteralValue } from "./Literal.ts";
-import { Token, TokenType } from "./Token.ts";
-import { ErrorFunc } from "./types/error.ts";
+import { LiteralValue } from "./Literal";
+import { Token, TokenType } from "./Token";
+import { ErrorFunc } from "./types/error";
 
 const KEYWORDS: Record<string, TokenType> = {
   and: TokenType.AND,
