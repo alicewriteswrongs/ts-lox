@@ -37,20 +37,3 @@ function parenthesize(name: string, ...exprs: Expr[]): string {
   out += ")";
   return out;
 }
-
-function main() {
-  const expr = createBinary(
-    createUnary(
-      new Token(TokenType.MINUS, "-", null, 1),
-      createLiteral(123),
-    ),
-    new Token(TokenType.STAR, "*", null, 1),
-    createGrouping(
-      createLiteral(45.67),
-    ),
-  );
-  const ast = printAST(expr);
-  console.log(ast);
-}
-
-main();
