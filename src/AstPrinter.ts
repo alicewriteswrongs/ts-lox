@@ -1,31 +1,28 @@
-import { Expr } from "./Expr";
+import { Expr } from "./Expr"
 
 export function printAST(expr: Expr) {
   switch (expr.exprType) {
     case "Binary": {
-      return parenthesize(expr.operator.lexeme, expr.left, expr.right);
+      return parenthesize(expr.operator.lexeme, expr.left, expr.right)
     }
     case "Grouping":
-      return parenthesize("group", expr.expression);
+      return parenthesize("group", expr.expression)
     case "Literal":
       if (expr.value == null) {
-        return "nil";
+        return "nil"
       }
-      return expr.value.toString();
+      return expr.value.toString()
     case "Unary":
-      return parenthesize(
-        expr.operator.lexeme,
-        expr.right,
-      );
+      return parenthesize(expr.operator.lexeme, expr.right)
   }
 }
 
 function parenthesize(name: string, ...exprs: Expr[]): string {
-  let out = `(${name}`;
+  let out = `(${name}`
   exprs.forEach((expr) => {
-    out += " ";
-    out += printAST(expr);
-  });
-  out += ")";
-  return out;
+    out += " "
+    out += printAST(expr)
+  })
+  out += ")"
+  return out
 }

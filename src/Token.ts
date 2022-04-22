@@ -1,28 +1,28 @@
-import { LiteralValue } from "./Literal";
+import { LiteralValue } from "./Literal"
 
 export class Token {
-  type: TokenType;
-  lexeme: string;
+  type: TokenType
+  lexeme: string
   /**
    * The literal value for this token - handy if it's a string or something!
    */
-  literal: LiteralValue;
-  line: number;
+  literal: LiteralValue
+  line: number
 
   constructor(
     type: TokenType,
     lexeme: string,
     literal: LiteralValue,
-    line: number,
+    line: number
   ) {
-    this.type = type;
-    this.lexeme = lexeme;
-    this.literal = literal;
-    this.line = line;
+    this.type = type
+    this.lexeme = lexeme
+    this.literal = literal
+    this.line = line
   }
 
   toString() {
-    return `${this.type} ${this.lexeme} ${this.literal}`;
+    return `${this.type} ${this.lexeme} ${this.literal}`
   }
 }
 

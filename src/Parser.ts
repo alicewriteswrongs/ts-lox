@@ -4,36 +4,36 @@ import {
   createLiteral,
   createUnary,
   Expr,
-} from "./Expr";
-import { Token, TokenType } from "./Token";
-import { ErrorFunc } from "./types/error";
+} from "./Expr"
+import { Token, TokenType } from "./Token"
+import { ErrorFunc } from "./types/error"
 
 /**
  * This Parser is where the grammar for Lox is really implemented. We
  * are implementing a recursive descent parser here.
  */
 export default class Parser {
-  #tokens: Token[];
-  #current = 0;
+  #tokens: Token[]
+  #current = 0
   /**
    * Our error reporter function, passed in from the calling
    * context.
    */
-  error: ErrorFunc;
+  error: ErrorFunc
 
   constructor(tokens: Token[], error: ErrorFunc) {
-    this.#tokens = tokens;
-    this.error = error;
+    this.#tokens = tokens
+    this.error = error
   }
 
   match(...types: TokenType[]): boolean {
     for (const type of types) {
       if (this.check(type)) {
-        this.advance();
-        return true;
+        this.advance()
+        return true
       }
     }
-    return false;
+    return false
   }
 
   /**
@@ -42,40 +42,37 @@ export default class Parser {
    */
   check(type: TokenType): boolean {
     if (this.isAtEnd()) {
-      return false;
+      return false
     }
-    return this.peek().type === type;
+    return this.peek().type === type
   }
 
   /**
    * Are we at the end of the current file?
    */
   isAtEnd(): boolean {
-    return this.peek().type === TokenType.EOF;
+    return this.peek().type === TokenType.EOF
   }
 
   /**
    * Grab the current token
    */
   peek(): Token {
-    return this.#tokens[this.#current];
+    return this.#tokens[this.#current]
   }
 
   /**
    * Grab the previous token
    */
   previous(): Token {
-    return this.#tokens[this.#current - 1];
+    return this.#tokens[this.#current - 1]
   }
 
   consume(type: TokenType, message: string) {
     if (this.check(type)) {
-      return this.advance();
+      return this.advance()
     }
-    throw this.parserError(
-      this.peek(),
-      message,
-    );
+    throw this.parserError(this.peek(), message)
   }
 
   /**
@@ -83,9 +80,9 @@ export default class Parser {
    * We also create an error that we can throw if we want to.
    */
   parserError(token: Token, message: string) {
-    this.error(token.line, message);
-    const error = new ParserError();
-    return error;
+    this.error(token.line, message)
+    const error = new ParserError()
+    return error
   }
 
   /**
@@ -93,20 +90,20 @@ export default class Parser {
    */
   advance(): Token {
     if (!this.isAtEnd()) {
-      this.#current++;
+      this.#current++
     }
-    return this.previous();
+    return this.previous()
   }
 
   /**
    * For doing a bit of error recovery.
    */
   synchronize() {
-    this.advance();
+    this.advance()
 
     while (!this.isAtEnd()) {
       if (this.previous().type === TokenType.SEMICOLON) {
-        return;
+        return
       }
 
       switch (this.peek().type) {
@@ -118,18 +115,18 @@ export default class Parser {
         case TokenType.WHILE:
         case TokenType.PRINT:
         case TokenType.RETURN:
-          return;
+          return
       }
 
-      this.advance();
+      this.advance()
     }
   }
 
   parse(): Expr | null {
     try {
-      return this.expression();
+      return this.expression()
     } catch (_err) {
-      return null;
+      return null
     }
   }
 
@@ -142,75 +139,71 @@ export default class Parser {
    * expression → equality ;
    */
   expression(): Expr {
-    return this.equality();
+    return this.equality()
   }
 
   /**
    * equality → comparison ( ( "!=" | "==" ) comparison )* ;
    */
   equality(): Expr {
-    let expr = this.comparison();
+    let expr = this.comparison()
 
     while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
-      const operator = this.previous();
-      const right = this.comparison();
-      expr = createBinary(
-        expr,
-        operator,
-        right,
-      );
+      const operator = this.previous()
+      const right = this.comparison()
+      expr = createBinary(expr, operator, right)
     }
 
-    return expr;
+    return expr
   }
 
   /**
    * comparison → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
    */
   comparison(): Expr {
-    let expr = this.term();
+    let expr = this.term()
 
     while (
       this.match(
         TokenType.GREATER,
         TokenType.GREATER_EQUAL,
         TokenType.LESS,
-        TokenType.LESS_EQUAL,
+        TokenType.LESS_EQUAL
       )
     ) {
-      const operator = this.previous();
-      const right = this.term();
-      expr = createBinary(expr, operator, right);
+      const operator = this.previous()
+      const right = this.term()
+      expr = createBinary(expr, operator, right)
     }
-    return expr;
+    return expr
   }
 
   /**
    * term → factor ( ( "-" | "+" ) factor )* ;
    */
   term(): Expr {
-    let expr = this.factor();
+    let expr = this.factor()
 
     while (this.match(TokenType.MINUS, TokenType.PLUS)) {
-      const operator = this.previous();
-      const right = this.factor();
-      expr = createBinary(expr, operator, right);
+      const operator = this.previous()
+      const right = this.factor()
+      expr = createBinary(expr, operator, right)
     }
-    return expr;
+    return expr
   }
 
   /**
    * factor → unary ( ( "/" | "*" ) unary )* ;
    */
   factor(): Expr {
-    let expr = this.unary();
+    let expr = this.unary()
 
     while (this.match(TokenType.SLASH, TokenType.STAR)) {
-      const operator = this.previous();
-      const right = this.unary();
-      expr = createBinary(expr, operator, right);
+      const operator = this.previous()
+      const right = this.unary()
+      expr = createBinary(expr, operator, right)
     }
-    return expr;
+    return expr
   }
 
   /**
@@ -219,11 +212,11 @@ export default class Parser {
    */
   unary(): Expr {
     if (this.match(TokenType.BANG, TokenType.MINUS)) {
-      const operator = this.previous();
-      const right = this.unary();
-      return createUnary(operator, right);
+      const operator = this.previous()
+      const right = this.unary()
+      return createUnary(operator, right)
     }
-    return this.primary();
+    return this.primary()
   }
 
   /**
@@ -232,27 +225,27 @@ export default class Parser {
    */
   primary(): Expr {
     if (this.match(TokenType.FALSE)) {
-      return createLiteral(false);
+      return createLiteral(false)
     }
 
     if (this.match(TokenType.TRUE)) {
-      return createLiteral(true);
+      return createLiteral(true)
     }
 
     if (this.match(TokenType.NIL)) {
-      return createLiteral(null);
+      return createLiteral(null)
     }
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
-      return createLiteral(this.previous().literal);
+      return createLiteral(this.previous().literal)
     }
 
     if (this.match(TokenType.LEFT_PAREN)) {
-      const expr = this.expression();
-      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-      return createGrouping(expr);
+      const expr = this.expression()
+      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+      return createGrouping(expr)
     }
-    throw this.parserError(this.peek(), "Expect expression.");
+    throw this.parserError(this.peek(), "Expect expression.")
   }
 }
 
