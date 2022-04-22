@@ -127,8 +127,6 @@ export default class Parser {
     }
   }
 
-
-
   // GRAMMAR RULES
   //
   // below here are the methods which implement the grammar for our
@@ -182,7 +180,7 @@ export default class Parser {
   term(): Expr {
     let expr = this.factor()
 
-    while (this.match(TokenType.SLASH, TokenType.STAR)) {
+    while (this.match(TokenType.MINUS, TokenType.PLUS)) {
       const operator = this.previous()
       const right = this.factor()
       expr = createBinary(expr, operator, right)
