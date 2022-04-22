@@ -1,15 +1,11 @@
 #!/bin/bash
 
-function lint {
-    deno lint src
-}
-
 function run {
     ts-node src/Lox.ts
 }
 
 function fmt {
-    deno fmt src tool
+    npx prettier --no-semi --write src/**/*.ts
 }
 
 function generate_ast {

@@ -3,11 +3,11 @@ import fs from "fs";
 function main() {
   const args = process.argv;
 
-  if (args.length != 1) {
+  if (args.length != 3) {
     console.log("Usage: generate_ast [output directory]");
     process.exit(64);
   } else {
-    const outputDir = args[0];
+    const outputDir = args[2];
 
     defineAst(outputDir, "Expr", [
       "Binary   | left: Expr, operator: Token, right: Expr",
@@ -27,8 +27,8 @@ function defineAst(
 
   const lines: string[] = [];
 
-  lines.push('import { Token } from "./Token.ts"');
-  lines.push('import { LiteralValue } from "./Literal.ts"');
+  lines.push('import { Token } from "./Token"');
+  lines.push('import { LiteralValue } from "./Literal"');
   lines.push("");
 
   types.forEach((typeString) => {
