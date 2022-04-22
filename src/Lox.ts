@@ -1,8 +1,8 @@
 import { printAST } from "./AstPrinter";
 import Parser from "./Parser";
 import { Scanner } from "./Scanner";
-import { readFile } from "fs/promises"
-import prompt from 'prompt-sync'
+import { readFile } from "fs/promises";
+import prompt from "prompt-sync";
 
 export class Lox {
   hadError = false;
@@ -31,7 +31,7 @@ export class Lox {
     while (true) {
       const input = prompt({
         sigint: true,
-        eot: true
+        eot: true,
       } as any)("> ");
 
       this.run(input ?? "");
