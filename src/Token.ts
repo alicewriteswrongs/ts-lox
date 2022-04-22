@@ -3,6 +3,9 @@ import { LiteralValue } from "./Literal.ts";
 export class Token {
   type: TokenType;
   lexeme: string;
+  /**
+   * The literal value for this token - handy if it's a string or something!
+   */
   literal: LiteralValue;
   line: number;
 

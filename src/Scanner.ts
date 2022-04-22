@@ -1,3 +1,4 @@
+import { LiteralValue } from "./Literal.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
@@ -183,12 +184,12 @@ export class Scanner {
       while (this.isDigit(this.peek())) {
         this.advance();
       }
-
-      this.addToken(
-        TokenType.NUMBER,
-        Number(this.source.slice(this.#start, this.#current)),
-      );
     }
+
+    this.addToken(
+      TokenType.NUMBER,
+      Number(this.source.slice(this.#start, this.#current)),
+    );
   }
 
   /**
