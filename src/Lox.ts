@@ -43,18 +43,18 @@ export class Lox {
     );
     const tokens = scanner.scanTokens();
 
-    console.log('tokens:');
+    console.log("tokens:");
     tokens.forEach((token) => {
       console.log(token);
     });
 
     // pass those tokens to a Parser and parse them into an AST
-    const parser = new Parser(tokens, this.error)
-    const expression = parser.parse()
+    const parser = new Parser(tokens, this.error);
+    const expression = parser.parse();
 
     if (expression) {
-      console.log('AST:');
-      console.log(printAST(expression))
+      console.log("AST:");
+      console.log(printAST(expression));
       console.log(expression);
     }
   }
