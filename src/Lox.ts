@@ -44,9 +44,10 @@ export class Lox {
     const tokens = scanner.scanTokens();
 
     // pass those tokens to a Parser and parse them into an AST
-    const parser = new Parser(tokens, 
+    const parser = new Parser(
+      tokens,
       (line: number, message: string) => this.error(line, message),
-                             )
+    );
     const expression = parser.parse();
 
     if (expression) {

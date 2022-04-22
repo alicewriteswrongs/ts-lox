@@ -1,12 +1,4 @@
-import {
-  createBinary,
-  createGrouping,
-  createLiteral,
-  createUnary,
-  Expr,
-} from "./Expr.ts";
-import { TokenType } from "./Token.ts";
-import { Token } from "./Token.ts";
+import { Expr } from "./Expr.ts";
 
 export function printAST(expr: Expr) {
   switch (expr.exprType) {
