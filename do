@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function lint {
+    deno lint src tool
+}
+
 function run {
     deno run src/Lox.ts
 }

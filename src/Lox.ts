@@ -27,11 +27,7 @@ export class Lox {
 
   runPrompt() {
     while (true) {
-      const input = prompt({
-        sigint: true,
-        eot: true,
-      } as any)("> ");
-
+      const input = prompt(">");
       this.run(input ?? "");
       this.hadError = false;
     }
