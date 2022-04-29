@@ -1,15 +1,15 @@
 #!/bin/bash
 
 function run {
-    ts-node src/Lox.ts
+    deno run src/Lox.ts
 }
 
 function fmt {
-    npx prettier --no-semi --write src/**/*.ts
+    deno fmt src tool
 }
 
 function generate_ast {
-    ts-node tool/GenerateAst.ts src
+    deno run --allow-write tool/GenerateAst.ts src
     fmt
 }
 

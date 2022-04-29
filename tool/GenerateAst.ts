@@ -1,11 +1,9 @@
-import fs from "fs";
-
 function main() {
-  const args = process.argv;
+  const args = Deno.args;
 
   if (args.length != 3) {
     console.log("Usage: generate_ast [output directory]");
-    process.exit(64);
+    Deno.exit(64);
   } else {
     const outputDir = args[2];
 
@@ -47,7 +45,7 @@ function defineAst(
   });
 
   const encoder = new TextEncoder();
-  fs.writeFileSync(path, encoder.encode(lines.join("\n")));
+  Deno.writeFileSync(path, encoder.encode(lines.join("\n")));
 }
 
 function defineType(

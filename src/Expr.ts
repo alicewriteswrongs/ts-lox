@@ -1,11 +1,11 @@
-import { Token } from "./Token"
-import { LiteralValue } from "./Literal"
+import { Token } from "./Token.ts";
+import { LiteralValue } from "./Literal.ts";
 
 export interface Binary {
-  left: Expr
-  operator: Token
-  right: Expr
-  exprType: "Binary"
+  left: Expr;
+  operator: Token;
+  right: Expr;
+  exprType: "Binary";
 }
 
 /**
@@ -22,13 +22,13 @@ export function createBinary(left: Expr, operator: Token, right: Expr): Binary {
     operator,
     right,
     exprType: "Binary",
-  }
-  return newBinary
+  };
+  return newBinary;
 }
 
 export interface Grouping {
-  expression: Expr
-  exprType: "Grouping"
+  expression: Expr;
+  exprType: "Grouping";
 }
 
 /**
@@ -41,13 +41,13 @@ export function createGrouping(expression: Expr): Grouping {
   const newGrouping: Grouping = {
     expression,
     exprType: "Grouping",
-  }
-  return newGrouping
+  };
+  return newGrouping;
 }
 
 export interface Literal {
-  value: LiteralValue
-  exprType: "Literal"
+  value: LiteralValue;
+  exprType: "Literal";
 }
 
 /**
@@ -60,14 +60,14 @@ export function createLiteral(value: LiteralValue): Literal {
   const newLiteral: Literal = {
     value,
     exprType: "Literal",
-  }
-  return newLiteral
+  };
+  return newLiteral;
 }
 
 export interface Unary {
-  operator: Token
-  right: Expr
-  exprType: "Unary"
+  operator: Token;
+  right: Expr;
+  exprType: "Unary";
 }
 
 /**
@@ -82,8 +82,8 @@ export function createUnary(operator: Token, right: Expr): Unary {
     operator,
     right,
     exprType: "Unary",
-  }
-  return newUnary
+  };
+  return newUnary;
 }
 
-export type Expr = Binary | Grouping | Literal | Unary
+export type Expr = Binary | Grouping | Literal | Unary;
