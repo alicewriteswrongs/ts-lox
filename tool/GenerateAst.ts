@@ -1,11 +1,11 @@
 function main() {
   const args = Deno.args;
 
-  if (args.length != 3) {
+  if (args.length != 1) {
     console.log("Usage: generate_ast [output directory]");
     Deno.exit(64);
   } else {
-    const outputDir = args[2];
+    const outputDir = args[0];
 
     defineAst(outputDir, "Expr", [
       "Binary   | left: Expr, operator: Token, right: Expr",
@@ -25,8 +25,8 @@ function defineAst(
 
   const lines: string[] = [];
 
-  lines.push('import { Token } from "./Token"');
-  lines.push('import { LiteralValue } from "./Literal"');
+  lines.push('import { Token } from "./Token.ts"');
+  lines.push('import { LiteralValue } from "./Literal.ts"');
   lines.push("");
 
   types.forEach((typeString) => {
@@ -72,8 +72,9 @@ function defineType(
   lines.push(" * Arguments:");
   fieldList.split(",").forEach((field) => {
     const [name, type] = field.split(":").map((str) => str.trim());
-    lines.push(` * ${name}: ${type}`);
+    lines.push(` * @param ${name} ${type}`);
   });
+  lines.push(` * @returns a ${typeName} node`);
   lines.push(" */");
 
   lines.push(`export function create${typeName} (`);

@@ -12,11 +12,16 @@ export interface Binary {
  * Factory function for creating a Binary record
  *
  * Arguments:
- * left: Expr
- * operator: Token
- * right: Expr
+ * @param left Expr
+ * @param operator Token
+ * @param right Expr
+ * @returns a Binary node
  */
-export function createBinary(left: Expr, operator: Token, right: Expr): Binary {
+export function createBinary(
+  left: Expr,
+  operator: Token,
+  right: Expr,
+): Binary {
   const newBinary: Binary = {
     left,
     operator,
@@ -35,9 +40,12 @@ export interface Grouping {
  * Factory function for creating a Grouping record
  *
  * Arguments:
- * expression: Expr
+ * @param expression Expr
+ * @returns a Grouping node
  */
-export function createGrouping(expression: Expr): Grouping {
+export function createGrouping(
+  expression: Expr,
+): Grouping {
   const newGrouping: Grouping = {
     expression,
     exprType: "Grouping",
@@ -54,9 +62,12 @@ export interface Literal {
  * Factory function for creating a Literal record
  *
  * Arguments:
- * value: LiteralValue
+ * @param value LiteralValue
+ * @returns a Literal node
  */
-export function createLiteral(value: LiteralValue): Literal {
+export function createLiteral(
+  value: LiteralValue,
+): Literal {
   const newLiteral: Literal = {
     value,
     exprType: "Literal",
@@ -74,10 +85,14 @@ export interface Unary {
  * Factory function for creating a Unary record
  *
  * Arguments:
- * operator: Token
- * right: Expr
+ * @param operator Token
+ * @param right Expr
+ * @returns a Unary node
  */
-export function createUnary(operator: Token, right: Expr): Unary {
+export function createUnary(
+  operator: Token,
+  right: Expr,
+): Unary {
   const newUnary: Unary = {
     operator,
     right,
@@ -86,4 +101,8 @@ export function createUnary(operator: Token, right: Expr): Unary {
   return newUnary;
 }
 
-export type Expr = Binary | Grouping | Literal | Unary;
+export type Expr =
+  | Binary
+  | Grouping
+  | Literal
+  | Unary;
