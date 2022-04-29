@@ -134,12 +134,35 @@ export default class Parser {
   //
   // below here are the methods which implement the grammar for our
   // language. Neat stuff!
+  //
+  //
+  // expression     → equality ("," expression)* ;
+  // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+  // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+  // term           → factor ( ( "-" | "+" ) factor )* ;
+  // factor         → unary ( ( "/" | "*" ) unary )* ;
+  // unary          → ( "!" | "-" ) unary
+  //                | primary ;
+  // primary        → NUMBER | STRING | "true" | "false" | "nil"
+  //                | "(" expression ")" ;
 
   /**
-   * expression → equality ;
+   * expression → equality ("," expression)* ;
    */
   expression(): Expr {
-    return this.equality();
+    let expr = this.equality();
+
+    while(
+      this.match(
+        TokenType.COMMA
+      )
+    ) {
+      const operator = this.previous()
+      const right = this.expression()
+      expr = createBinary(expr, operator, right)
+    }
+
+    return expr
   }
 
   /**
