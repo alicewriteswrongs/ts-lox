@@ -42,6 +42,8 @@ export enum TokenType {
   SEMICOLON = "Semicolon",
   SLASH = "Slash",
   STAR = "Star",
+  QUESTION_MARK = "QuestionMark",
+  COLON = "Colon",
 
   // One or two character tokens.
   BANG = "Bang",

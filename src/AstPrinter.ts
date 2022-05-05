@@ -2,9 +2,10 @@ import { Expr } from "./Expr.ts";
 
 export function printAST(expr: Expr) {
   switch (expr.exprType) {
-    case "Binary": {
+    case "Ternary":
+      return parenthesize("Ternary", expr.condition, expr.whenTrue, expr.whenFalse)
+    case "Binary":
       return parenthesize(expr.operator.lexeme, expr.left, expr.right);
-    }
     case "Grouping":
       return parenthesize("group", expr.expression);
     case "Literal":

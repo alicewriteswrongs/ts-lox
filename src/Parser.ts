@@ -1,3 +1,4 @@
+import { createTernary } from "./Expr.ts";
 import {
   createBinary,
   createGrouping,
@@ -136,7 +137,8 @@ export default class Parser {
   // language. Neat stuff!
   //
   //
-  // expression     → equality ("," expression)* ;
+  // expression     → ternary ("," ternary)* ;
+  // ternary        → equality ("?" expression ":" ternary)?
   // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
   // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
   // term           → factor ( ( "-" | "+" ) factor )* ;
@@ -147,22 +149,44 @@ export default class Parser {
   //                | "(" expression ")" ;
 
   /**
-   * expression → equality ("," expression)* ;
+   * expression → ternary ("," ternary)* ;
    */
   expression(): Expr {
-    let expr = this.equality();
+    let expr = this.ternary();
 
-    while(
+    while (
       this.match(
-        TokenType.COMMA
+        TokenType.COMMA,
       )
     ) {
-      const operator = this.previous()
-      const right = this.expression()
-      expr = createBinary(expr, operator, right)
+      const operator = this.previous();
+      const right = this.ternary();
+      expr = createBinary(expr, operator, right);
+    }
+    return expr
+  }
+
+  /**
+   * ternary → equality ("?" expression ":" ternary)?
+   */
+  ternary(): Expr {
+    let expr = this.equality()
+
+    while (
+      this.match(TokenType.QUESTION_MARK)
+    ) {
+      const whenTrue = this.ternary()
+
+      this.consume(TokenType.COLON, "? should be paired with a : for a ternary");
+      const whenFalse = this.ternary()
+      expr = createTernary(
+        expr, 
+        whenTrue,
+        whenFalse
+      )
     }
 
-    return expr
+    return expr;
   }
 
   /**

@@ -1,6 +1,36 @@
 import { Token } from "./Token.ts";
 import { LiteralValue } from "./Literal.ts";
 
+export interface Ternary {
+  condition: Expr;
+  whenTrue: Expr;
+  whenFalse: Expr;
+  exprType: "Ternary";
+}
+
+/**
+ * Factory function for creating a Ternary record
+ *
+ * Arguments:
+ * @param condition Expr
+ * @param whenTrue Expr
+ * @param whenFalse Expr
+ * @returns a Ternary node
+ */
+export function createTernary(
+  condition: Expr,
+  whenTrue: Expr,
+  whenFalse: Expr,
+): Ternary {
+  const newTernary: Ternary = {
+    condition,
+    whenTrue,
+    whenFalse,
+    exprType: "Ternary",
+  };
+  return newTernary;
+}
+
 export interface Binary {
   left: Expr;
   operator: Token;
@@ -102,6 +132,7 @@ export function createUnary(
 }
 
 export type Expr =
+  | Ternary
   | Binary
   | Grouping
   | Literal

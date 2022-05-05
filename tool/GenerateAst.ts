@@ -8,6 +8,7 @@ function main() {
     const outputDir = args[0];
 
     defineAst(outputDir, "Expr", [
+      "Ternary  | condition: Expr, whenTrue: Expr, whenFalse: Expr",
       "Binary   | left: Expr, operator: Token, right: Expr",
       "Grouping | expression: Expr",
       "Literal  | value: LiteralValue",

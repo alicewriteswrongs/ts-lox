@@ -7,6 +7,7 @@ import {
 } from "https://deno.land/std@0.137.0/testing/mock.ts";
 import { Scanner } from "./Scanner.ts";
 import { TokenType } from "./Token.ts";
+const { test } = Deno;
 
 const setup = (source: string) => {
   const logStub = spy();
@@ -27,13 +28,13 @@ const assertTokens = (scanner: Scanner, tokens: TokenType[]) => {
   );
 };
 
-Deno.test("Scanner should return EOF for empty string", () => {
+test("Scanner should return EOF for empty string", () => {
   const { scanner } = setup("");
   scanner.scanTokens();
   assertTokens(scanner, [TokenType.EOF]);
 });
 
-Deno.test("should tokenize some numbers", () => {
+test("should tokenize some numbers", () => {
   const { scanner } = setup("1 12 144");
   scanner.scanTokens();
   assertTokens(
@@ -51,14 +52,14 @@ Deno.test("should tokenize some numbers", () => {
   );
 });
 
-Deno.test("should tokenize a string", () => {
+test("should tokenize a string", () => {
   const { scanner } = setup('"my string"');
   scanner.scanTokens();
   assertTokens(scanner, [TokenType.STRING, TokenType.EOF]);
   assertEquals(scanner.tokens[0].literal, "my string");
 });
 
-Deno.test("should tokenize various punctuation", () => {
+test("should tokenize various punctuation", () => {
   const { scanner } = setup("(){},.-+;*!<>?:");
   scanner.scanTokens();
   assertTokens(scanner, [
@@ -81,7 +82,7 @@ Deno.test("should tokenize various punctuation", () => {
   ]);
 });
 
-Deno.test("should correctly tokenize a few two-character operators", () => {
+test("should correctly tokenize a few two-character operators", () => {
   const { scanner } = setup("!= == <=  >=");
   scanner.scanTokens();
   assertTokens(scanner, [
