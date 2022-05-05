@@ -46,3 +46,11 @@ test("should parse nested ternaries correctly", () => {
   const AST = testParsing("1 ? 4 ? 5 : 6 : 3").parser.parse()
   assertEquals(printAST(AST!), '(Ternary 1 (Ternary 4 5 6) 3)')
 })
+
+;["1 ? 2", "1 ? 2 ? 3", "1 : 2"].forEach(badOne => {
+  test("should give an error for malformed ternaries", () => {
+    const { parser, logStub }  = testParsing(badOne)
+    parser.parse();
+    assertSpyCall(logStub, 1)
+  })
+})
