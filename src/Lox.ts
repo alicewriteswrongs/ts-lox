@@ -25,6 +25,9 @@ export class Lox {
     if (this.hadError) {
       Deno.exit(65);
     }
+    if (this.hadRuntimeError) {
+      Deno.exit(70);
+    }
   }
 
   runPrompt() {

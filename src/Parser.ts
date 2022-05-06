@@ -179,13 +179,6 @@ export default class Parser {
   ternary(): Expr {
     let expr = this.equality();
 
-    if (this.peek().type === TokenType.COLON) {
-      this.parserError(
-        this.peek(),
-        ": can't be used on it's own without a leading ?",
-      );
-    }
-
     while (
       this.match(TokenType.QUESTION_MARK)
     ) {
