@@ -1,9 +1,11 @@
 import { printAST } from "./AstPrinter.ts";
+import { interpret } from "./Interpreter.ts";
 import Parser from "./Parser.ts";
 import { Scanner } from "./Scanner.ts";
 
 export class Lox {
   hadError = false;
+  hadRuntimeError = false;
 
   main() {
     const args = Deno.args;
@@ -50,14 +52,23 @@ export class Lox {
     );
     const expression = parser.parse();
 
+    // interpret that expression and show the result
     if (expression) {
-      console.log("AST:");
-      console.log(printAST(expression));
+      const value = interpret(
+        expression,
+        (line: number, message: string) => this.error(line, message),
+      );
+      console.log(value);
     }
   }
 
   error(line: number, message: string) {
     this.report(line, "", message);
+  }
+
+  runtimeError(line: number, message: string) {
+    console.error(`[line ${line}]: RuntimeError: ${message}`);
+    this.hadRuntimeError = true;
   }
 
   report(line: number, where: string, message: string) {

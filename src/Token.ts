@@ -80,3 +80,16 @@ export enum TokenType {
 
   EOF = "EOF",
 }
+
+export const BINARY_OPERATORS = [
+  TokenType.COMMA,
+  TokenType.PLUS,
+  TokenType.BANG_EQUAL,
+  TokenType.EQUAL_EQUAL,
+  TokenType.GREATER,
+  TokenType.GREATER_EQUAL,
+  TokenType.LESS,
+  TokenType.LESS_EQUAL,
+  TokenType.SLASH,
+  TokenType.STAR,
+];

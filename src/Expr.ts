@@ -3,6 +3,7 @@ import { LiteralValue } from "./Literal.ts";
 
 export interface Ternary {
   condition: Expr;
+  token: Token;
   whenTrue: Expr;
   whenFalse: Expr;
   exprType: "Ternary";
@@ -13,17 +14,20 @@ export interface Ternary {
  *
  * Arguments:
  * @param condition Expr
+ * @param token Token
  * @param whenTrue Expr
  * @param whenFalse Expr
  * @returns a Ternary node
  */
 export function createTernary(
   condition: Expr,
+  token: Token,
   whenTrue: Expr,
   whenFalse: Expr,
 ): Ternary {
   const newTernary: Ternary = {
     condition,
+    token,
     whenTrue,
     whenFalse,
     exprType: "Ternary",

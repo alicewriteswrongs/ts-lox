@@ -1,12 +1,12 @@
-import { createTernary } from "./Expr.ts";
 import {
   createBinary,
   createGrouping,
   createLiteral,
+  createTernary,
   createUnary,
   Expr,
 } from "./Expr.ts";
-import { Token, TokenType } from "./Token.ts";
+import { BINARY_OPERATORS, Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
 /**
@@ -152,6 +152,13 @@ export default class Parser {
    * expression → ternary ("," ternary)* ;
    */
   expression(): Expr {
+    if (BINARY_OPERATORS.includes(this.peek().type)) {
+      this.parserError(
+        this.peek(),
+        "looks like we've got a binary operator out front",
+      );
+    }
+
     let expr = this.ternary();
 
     while (
@@ -163,27 +170,38 @@ export default class Parser {
       const right = this.ternary();
       expr = createBinary(expr, operator, right);
     }
-    return expr
+    return expr;
   }
 
   /**
    * ternary → equality ("?" expression ":" ternary)?
    */
   ternary(): Expr {
-    let expr = this.equality()
+    let expr = this.equality();
+
+    if (this.peek().type === TokenType.COLON) {
+      this.parserError(
+        this.peek(),
+        ": can't be used on it's own without a leading ?",
+      );
+    }
 
     while (
       this.match(TokenType.QUESTION_MARK)
     ) {
-      const whenTrue = this.ternary()
+      const whenTrue = this.ternary();
 
-      this.consume(TokenType.COLON, "? should be paired with a : for a ternary");
-      const whenFalse = this.ternary()
+      const colon = this.consume(
+        TokenType.COLON,
+        "? should be paired with a : for a ternary",
+      );
+      const whenFalse = this.ternary();
       expr = createTernary(
-        expr, 
+        expr,
+        colon,
         whenTrue,
-        whenFalse
-      )
+        whenFalse,
+      );
     }
 
     return expr;
