@@ -1,13 +1,13 @@
 import { Binary, Expr, Ternary, Unary } from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
 import { RuntimeError } from "./RuntimeError.ts";
+import { ExpressionStmt, PrintStmt, Stmt } from "./Stmt.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
-export function interpret(expression: Expr, error: ErrorFunc) {
+export function interpret(statements: Stmt[], error: ErrorFunc) {
   try {
-    const value = recursiveInterpret(expression);
-    return stringify(value);
+    statements.forEach(execute);
   } catch (err) {
     if (err instanceof RuntimeError) {
       error(err.token.line, err.message);
@@ -15,7 +15,28 @@ export function interpret(expression: Expr, error: ErrorFunc) {
   }
 }
 
-function stringify(value: any) {
+function execute(statement: Stmt) {
+  switch (statement.nodeType) {
+    case "ExpressionStmt":
+      interpretExpressionStmt(statement);
+      break;
+    case "PrintStmt":
+      interpretPrintStmt(statement);
+      break;
+  }
+}
+
+function interpretExpressionStmt(statement: ExpressionStmt): void {
+  const _value = interpretExpression(statement.expression);
+  return;
+}
+
+function interpretPrintStmt(statement: PrintStmt): void {
+  const value = interpretExpression(statement.expression);
+  console.log(stringify(value));
+}
+
+export function stringify(value: any) {
   if (value === null) {
     return "nil";
   }
@@ -32,12 +53,12 @@ function stringify(value: any) {
  * This function does the real work of recurring down the AST
  * and interpreting everything.
  */
-export function recursiveInterpret(expr: Expr): LiteralValue {
+export function interpretExpression(expr: Expr): LiteralValue {
   switch (expr.nodeType) {
     case "Literal":
       return expr.value;
     case "Grouping":
-      return recursiveInterpret(expr.expression);
+      return interpretExpression(expr.expression);
     case "Unary":
       return interpretUnary(expr);
     case "Binary":
@@ -48,7 +69,7 @@ export function recursiveInterpret(expr: Expr): LiteralValue {
 }
 
 function interpretUnary(expr: Unary) {
-  const right = recursiveInterpret(expr.right);
+  const right = interpretExpression(expr.right);
 
   switch (expr.operator.type) {
     case TokenType.MINUS:
@@ -75,8 +96,8 @@ function isTruthy(value: LiteralValue): boolean {
 }
 
 function interpretBinary(expr: Binary): LiteralValue {
-  const left = recursiveInterpret(expr.left);
-  const right = recursiveInterpret(expr.right);
+  const left = interpretExpression(expr.left);
+  const right = interpretExpression(expr.right);
 
   switch (expr.operator.type) {
     case TokenType.MINUS:
@@ -135,15 +156,15 @@ function isEqual(a: LiteralValue, b: LiteralValue) {
 }
 
 function interpretTernary(expr: Ternary) {
-  const condition = recursiveInterpret(expr.condition);
+  const condition = interpretExpression(expr.condition);
 
   // let's do a short-circuit evaluation
 
   if (isTruthy(condition)) {
-    const ifTrue = recursiveInterpret(expr.whenTrue);
+    const ifTrue = interpretExpression(expr.whenTrue);
     return ifTrue;
   } else {
-    const ifFalse = recursiveInterpret(expr.whenFalse);
+    const ifFalse = interpretExpression(expr.whenFalse);
     return ifFalse;
   }
 }

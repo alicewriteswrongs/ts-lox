@@ -1,4 +1,4 @@
-import { printAST } from "./AstPrinter.ts";
+#!/usr/bin/env -S deno run --allow-read
 import { interpret } from "./Interpreter.ts";
 import Parser from "./Parser.ts";
 import { Scanner } from "./Scanner.ts";
@@ -9,11 +9,11 @@ export class Lox {
 
   main() {
     const args = Deno.args;
-    if (args.length > 3) {
+    if (args.length > 1) {
       console.log("Usage: tslox [script]");
       Deno.exit(64);
-    } else if (args.length === 3) {
-      this.runFile(args[2]);
+    } else if (args.length === 1) {
+      this.runFile(args[0]);
     } else {
       this.runPrompt();
     }
@@ -39,8 +39,6 @@ export class Lox {
   }
 
   run(source: string) {
-    console.log(`running ${source}`);
-
     // create a scanner and scan it to produce a list of tokens
     const scanner = new Scanner(
       source,
@@ -53,15 +51,14 @@ export class Lox {
       tokens,
       (line: number, message: string) => this.error(line, message),
     );
-    const expression = parser.parse();
+    const statements = parser.parse();
 
     // interpret that expression and show the result
-    if (expression) {
-      const value = interpret(
-        expression,
+    if (statements) {
+      interpret(
+        statements,
         (line: number, message: string) => this.error(line, message),
       );
-      console.log(value);
     }
   }
 
