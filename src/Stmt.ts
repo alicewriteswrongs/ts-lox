@@ -1,49 +1,56 @@
 import { Expr } from "./Expr.ts";
 
-export interface Expression {
+export interface ExpressionStmt {
   expression: Expr;
-  exprType: "Expression";
+  nodeType: "ExpressionStmt";
 }
 
 /**
- * Factory function for creating a Expression record
+ * Factory function for creating a ExpressionStmt record
  *
  * Arguments:
  * @param expression Expr
- * @returns a Expression node
+ * @returns a ExpressionStmt node
  */
-export function createExpression(
+export function createExpressionStmt(
   expression: Expr,
-): Expression {
-  const newExpression: Expression = {
+): ExpressionStmt {
+  const newExpressionStmt: ExpressionStmt = {
     expression,
-    exprType: "Expression",
+    nodeType: "ExpressionStmt",
   };
-  return newExpression;
+  return newExpressionStmt;
 }
 
-export interface Print {
+export interface PrintStmt {
   expression: Expr;
-  exprType: "Print";
+  nodeType: "PrintStmt";
 }
 
 /**
- * Factory function for creating a Print record
+ * Factory function for creating a PrintStmt record
  *
  * Arguments:
  * @param expression Expr
- * @returns a Print node
+ * @returns a PrintStmt node
  */
-export function createPrint(
+export function createPrintStmt(
   expression: Expr,
-): Print {
-  const newPrint: Print = {
+): PrintStmt {
+  const newPrintStmt: PrintStmt = {
     expression,
-    exprType: "Print",
+    nodeType: "PrintStmt",
   };
-  return newPrint;
+  return newPrintStmt;
 }
 
 export type Stmt =
-  | Expression
-  | Print;
+  | ExpressionStmt
+  | PrintStmt;
+
+export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
+  return [
+    "ExpressionStmt",
+    "PrintStmt",
+  ].includes(ASTNode.nodeType);
+}

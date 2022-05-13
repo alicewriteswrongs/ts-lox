@@ -1,11 +1,12 @@
 import { Expr } from "./Expr.ts";
+import { Stmt } from "./Stmt.ts";
 
-export function printAST(expr: Expr | null) {
+export function printAST(expr: Expr | Stmt | null) {
   if (expr === null) {
     return "null";
   }
 
-  switch (expr.exprType) {
+  switch (expr.nodeType) {
     case "Ternary":
       return parenthesize(
         "Ternary",

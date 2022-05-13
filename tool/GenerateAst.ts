@@ -16,8 +16,8 @@ function main() {
     ]);
 
     defineAst(outputDir, "Stmt", [
-      "Expression | expression: Expr",
-      "Print      | expression: Expr",
+      "ExpressionStmt | expression: Expr",
+      "PrintStmt      | expression: Expr",
     ]);
   }
 }
@@ -35,8 +35,13 @@ function defineAst(
   lines.push('import { LiteralValue } from "./Literal.ts"');
   lines.push("");
 
-  types.forEach((typeString) => {
-    const [typeName, fields] = typeString.split("|").map((str) => str.trim());
+  const typeNameToFields = types.map((typeString) =>
+    typeString
+      .split("|")
+      .map((str) => str.trim())
+  );
+
+  typeNameToFields.forEach(([typeName, fields]) => {
     defineType(
       lines,
       typeName,
@@ -44,11 +49,23 @@ function defineAst(
     );
   });
 
+  // add union type for all these things
   lines.push(`export type ${baseName} =`);
   types.forEach((typeString) => {
     const [typeName] = typeString.split("|").map((str) => str.trim());
     lines.push(`| ${typeName}`);
   });
+  lines.push("");
+
+  // add a 'is this a ${nodeType}?' function
+  lines.push(
+    `export function is${baseName}(ASTNode: Stmt | Expr): ASTNode is ${baseName} {`,
+  );
+  lines.push("return [");
+  typeNameToFields.forEach(([typeName]) => lines.push(`"${typeName}",`));
+  lines.push("].includes(ASTNode.nodeType)");
+  lines.push("}");
+  lines.push("");
 
   const encoder = new TextEncoder();
   Deno.writeFileSync(path, encoder.encode(lines.join("\n")));
@@ -64,7 +81,7 @@ function defineType(
   fieldList.split(",").forEach((field) => {
     lines.push(field);
   });
-  lines.push(`exprType: "${typeName}"`);
+  lines.push(`nodeType: "${typeName}"`);
   lines.push("}");
   lines.push("");
   /**
@@ -93,7 +110,7 @@ function defineType(
 
     lines.push(`${name},`);
   });
-  lines.push(`exprType: "${typeName}"`);
+  lines.push(`nodeType: "${typeName}"`);
   lines.push("}");
   lines.push(`return new${typeName}`);
   lines.push("}");

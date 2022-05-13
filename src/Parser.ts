@@ -6,6 +6,8 @@ import {
   createUnary,
   Expr,
 } from "./Expr.ts";
+import { createExpressionStmt, createPrintStmt } from "./Stmt.ts";
+import { Stmt } from "./Stmt.ts";
 import { BINARY_OPERATORS, Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
@@ -27,6 +29,10 @@ export default class Parser {
     this.error = error;
   }
 
+  /**
+   * Check that the current token is of a given TokenType. If it is, consume it
+   * so we can move on.
+   */
   match(...types: TokenType[]): boolean {
     for (const type of types) {
       if (this.check(type)) {
@@ -123,9 +129,13 @@ export default class Parser {
     }
   }
 
-  parse(): Expr | null {
+  parse(): Stmt[] | null {
     try {
-      return this.expression();
+      const statements: Stmt[] = [];
+      while (!this.isAtEnd()) {
+        statements.push(this.statement());
+      }
+      return statements;
     } catch (_err) {
       return null;
     }
@@ -151,6 +161,31 @@ export default class Parser {
   //                | primary ;
   // primary        → NUMBER | STRING | "true" | "false" | "nil"
   //                | "(" expression ")" ;
+
+  /**
+   * statement      → exprStmt
+   *                | printStmt ;
+   */
+  statement(): Stmt {
+    if (this.match(TokenType.PRINT)) {
+      return this.printStatement();
+    } else {
+      return this.expressionStatement();
+    }
+  }
+
+  printStatement(): Stmt {
+    const expr = this.expression();
+
+    this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return createPrintStmt(expr);
+  }
+
+  expressionStatement(): Stmt {
+    const expr = this.expression();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return createExpressionStmt(expr);
+  }
 
   /**
    * expression → ternary ("," ternary)* ;

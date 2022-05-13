@@ -6,7 +6,7 @@ export interface Ternary {
   token: Token;
   whenTrue: Expr;
   whenFalse: Expr;
-  exprType: "Ternary";
+  nodeType: "Ternary";
 }
 
 /**
@@ -30,7 +30,7 @@ export function createTernary(
     token,
     whenTrue,
     whenFalse,
-    exprType: "Ternary",
+    nodeType: "Ternary",
   };
   return newTernary;
 }
@@ -39,7 +39,7 @@ export interface Binary {
   left: Expr;
   operator: Token;
   right: Expr;
-  exprType: "Binary";
+  nodeType: "Binary";
 }
 
 /**
@@ -60,14 +60,14 @@ export function createBinary(
     left,
     operator,
     right,
-    exprType: "Binary",
+    nodeType: "Binary",
   };
   return newBinary;
 }
 
 export interface Grouping {
   expression: Expr;
-  exprType: "Grouping";
+  nodeType: "Grouping";
 }
 
 /**
@@ -82,14 +82,14 @@ export function createGrouping(
 ): Grouping {
   const newGrouping: Grouping = {
     expression,
-    exprType: "Grouping",
+    nodeType: "Grouping",
   };
   return newGrouping;
 }
 
 export interface Literal {
   value: LiteralValue;
-  exprType: "Literal";
+  nodeType: "Literal";
 }
 
 /**
@@ -104,7 +104,7 @@ export function createLiteral(
 ): Literal {
   const newLiteral: Literal = {
     value,
-    exprType: "Literal",
+    nodeType: "Literal",
   };
   return newLiteral;
 }
@@ -112,7 +112,7 @@ export function createLiteral(
 export interface Unary {
   operator: Token;
   right: Expr;
-  exprType: "Unary";
+  nodeType: "Unary";
 }
 
 /**
@@ -130,7 +130,7 @@ export function createUnary(
   const newUnary: Unary = {
     operator,
     right,
-    exprType: "Unary",
+    nodeType: "Unary",
   };
   return newUnary;
 }
@@ -141,3 +141,13 @@ export type Expr =
   | Grouping
   | Literal
   | Unary;
+
+export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
+  return [
+    "Ternary",
+    "Binary",
+    "Grouping",
+    "Literal",
+    "Unary",
+  ].includes(ASTNode.nodeType);
+}

@@ -33,7 +33,7 @@ function stringify(value: any) {
  * and interpreting everything.
  */
 export function recursiveInterpret(expr: Expr): LiteralValue {
-  switch (expr.exprType) {
+  switch (expr.nodeType) {
     case "Literal":
       return expr.value;
     case "Grouping":
