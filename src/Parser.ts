@@ -136,7 +136,11 @@ export default class Parser {
   // below here are the methods which implement the grammar for our
   // language. Neat stuff!
   //
-  //
+  // program        → statement* EOF ;
+  // statement      → exprStmt
+  //                | printStmt ;
+  // exprStmt       → expression ";" ;
+  // printStmt      → "print" expression ";" ;
   // expression     → ternary ("," ternary)* ;
   // ternary        → equality ("?" expression ":" ternary)?
   // equality       → comparison ( ( "!=" | "==" ) comparison )* ;

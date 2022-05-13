@@ -14,6 +14,11 @@ function main() {
       "Literal  | value: LiteralValue",
       "Unary    | operator: Token, right: Expr",
     ]);
+
+    defineAst(outputDir, "Stmt", [
+      "Expression | expression: Expr",
+      "Print      | expression: Expr",
+    ]);
   }
 }
 
