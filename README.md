@@ -4,10 +4,16 @@ This is my TypeScript implementation of the JLox tree-walk interpreter for the
 Lox programming language, as presented in
 [Crafting Interpreters](https://craftinginterpreters.com/).
 
-Run it by doing:
+Run it by just doing:
 
 ```sh
-./do run
+./src/Lox.ts ./path/to/script.lox
 ```
 
-The only dependency is Deno.
+or
+
+```sh
+./src/Lox.ts
+```
+
+to get a REPL. The only dependency is Deno.
