@@ -146,7 +146,9 @@ export default class Parser {
   // below here are the methods which implement the grammar for our
   // language. Neat stuff!
   //
-  // program        → statement* EOF ;
+  // program        → declaration* EOF ;
+  // declaration    → varDecl
+  //                | statement ;
   // statement      → exprStmt
   //                | printStmt ;
   // exprStmt       → expression ";" ;
