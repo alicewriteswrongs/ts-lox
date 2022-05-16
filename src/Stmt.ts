@@ -1,3 +1,4 @@
+import { Token } from "./Token.ts";
 import { Expr } from "./Expr.ts";
 
 export interface ExpressionStmt {
@@ -44,13 +45,41 @@ export function createPrintStmt(
   return newPrintStmt;
 }
 
+export interface VarStmt {
+  name: Token;
+  initializer: Expr;
+  nodeType: "VarStmt";
+}
+
+/**
+ * Factory function for creating a VarStmt record
+ *
+ * Arguments:
+ * @param name Token
+ * @param initializer Expr
+ * @returns a VarStmt node
+ */
+export function createVarStmt(
+  name: Token,
+  initializer: Expr,
+): VarStmt {
+  const newVarStmt: VarStmt = {
+    name,
+    initializer,
+    nodeType: "VarStmt",
+  };
+  return newVarStmt;
+}
+
 export type Stmt =
   | ExpressionStmt
-  | PrintStmt;
+  | PrintStmt
+  | VarStmt;
 
 export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
   return [
     "ExpressionStmt",
     "PrintStmt",
+    "VarStmt",
   ].includes(ASTNode.nodeType);
 }
