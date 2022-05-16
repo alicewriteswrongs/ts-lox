@@ -1,5 +1,5 @@
-import { Expr } from "./Expr.ts";
 import { Token } from "./Token.ts";
+import { Expr } from "./Expr.ts";
 
 export interface ExpressionStmt {
   expression: Expr;
@@ -47,7 +47,7 @@ export function createPrintStmt(
 
 export interface VarStmt {
   name: Token;
-  initializer: Expr;
+  initializer?: Expr;
   nodeType: "VarStmt";
 }
 
@@ -56,12 +56,12 @@ export interface VarStmt {
  *
  * Arguments:
  * @param name Token
- * @param initializer Expr
+ * @param initializer? Expr
  * @returns a VarStmt node
  */
 export function createVarStmt(
   name: Token,
-  initializer: Expr,
+  initializer?: Expr,
 ): VarStmt {
   const newVarStmt: VarStmt = {
     name,

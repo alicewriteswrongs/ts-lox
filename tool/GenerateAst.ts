@@ -19,7 +19,7 @@ function main() {
     defineAst(outputDir, "Stmt", [
       "ExpressionStmt | expression: Expr",
       "PrintStmt      | expression: Expr",
-      "VarStmt        | name: Token, initializer: Expr",
+      "VarStmt        | name: Token, initializer?: Expr",
     ]);
   }
 }

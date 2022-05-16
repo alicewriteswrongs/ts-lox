@@ -4,9 +4,14 @@ import {
   createLiteral,
   createTernary,
   createUnary,
+  createVariable,
   Expr,
 } from "./Expr.ts";
-import { createExpressionStmt, createPrintStmt } from "./Stmt.ts";
+import {
+  createExpressionStmt,
+  createPrintStmt,
+  createVarStmt,
+} from "./Stmt.ts";
 import { Stmt } from "./Stmt.ts";
 import { BINARY_OPERATORS, Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
@@ -133,7 +138,10 @@ export default class Parser {
     try {
       const statements: Stmt[] = [];
       while (!this.isAtEnd()) {
-        statements.push(this.statement());
+        const declaration = this.declaration()
+        if (declaration) {
+          statements.push(declaration)
+        }
       }
       return statements;
     } catch (_err) {
@@ -167,8 +175,23 @@ export default class Parser {
   //                | IDENTIFIER ;
 
   /**
-   * statement      → exprStmt
-   *                | printStmt ;
+   * declaration    → varDecl
+   *                | statement ;
+   */
+  declaration() {
+    try {
+      if (this.match(TokenType.VAR)) {
+        return this.varDeclaration();
+      }
+      return this.statement();
+    } catch (err) {
+      this.synchronize();
+    }
+  }
+
+  /**
+   * statement → exprStmt
+   *           | printStmt ;
    */
   statement(): Stmt {
     if (this.match(TokenType.PRINT)) {
@@ -178,6 +201,24 @@ export default class Parser {
     }
   }
 
+  /**
+   * varDecl → "var" IDENTIFIER ( "=" expression )? ";" ;
+   */
+  varDeclaration() {
+    const name = this.consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+    let initializer = undefined;
+    if (this.match(TokenType.EQUAL)) {
+      initializer = this.expression();
+    }
+
+    this.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+    return createVarStmt(name, initializer);
+  }
+
+  /**
+   * printStmt → "print" expression ";" ;
+   */
   printStatement(): Stmt {
     const expr = this.expression();
 
@@ -185,6 +226,9 @@ export default class Parser {
     return createPrintStmt(expr);
   }
 
+  /**
+   * exprStmt → expression ";" ;
+   */
   expressionStatement(): Stmt {
     const expr = this.expression();
     this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
@@ -339,6 +383,10 @@ export default class Parser {
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
       return createLiteral(this.previous().literal);
+    }
+
+    if (this.match(TokenType.IDENTIFIER)) {
+      return createVariable(this.previous())
     }
 
     if (this.match(TokenType.LEFT_PAREN)) {

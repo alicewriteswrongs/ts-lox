@@ -2,6 +2,9 @@ import { LiteralValue } from "./Literal.ts";
 
 export class Token {
   type: TokenType;
+  /**
+   * The original source string which was read and turned into this token
+   */
   lexeme: string;
   /**
    * The literal value for this token - handy if it's a string or something!

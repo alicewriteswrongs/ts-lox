@@ -1,13 +1,15 @@
-import { Binary, Expr, Ternary, Unary } from "./Expr.ts";
+import { Environment } from "./Environment.ts";
+import { Binary, Expr, Ternary, Unary, Variable } from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
 import { RuntimeError } from "./RuntimeError.ts";
-import { ExpressionStmt, PrintStmt, Stmt } from "./Stmt.ts";
+import { ExpressionStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
 export function interpret(statements: Stmt[], error: ErrorFunc) {
+  const environment = new Environment
   try {
-    statements.forEach(execute);
+    statements.forEach(stmt => execute(stmt,  environment))
   } catch (err) {
     if (err instanceof RuntimeError) {
       error(err.token.line, err.message);
@@ -15,24 +17,36 @@ export function interpret(statements: Stmt[], error: ErrorFunc) {
   }
 }
 
-function execute(statement: Stmt) {
+function execute(statement: Stmt, environment: Environment) {
   switch (statement.nodeType) {
+    case "VarStmt":
+      interpretVarStmt(statement, environment);
+      break
     case "ExpressionStmt":
-      interpretExpressionStmt(statement);
+      interpretExpressionStmt(statement, environment);
       break;
     case "PrintStmt":
-      interpretPrintStmt(statement);
+      interpretPrintStmt(statement, environment);
       break;
   }
 }
 
-function interpretExpressionStmt(statement: ExpressionStmt): void {
-  const _value = interpretExpression(statement.expression);
+function interpretVarStmt(statement: VarStmt, environment: Environment) {
+  let value = null
+  if (statement.initializer) {
+    value = interpretExpression(statement.initializer, environment)
+  }
+
+  environment.define(statement.name.lexeme, value)
+}
+
+function interpretExpressionStmt(statement: ExpressionStmt, environment: Environment): void {
+  const _value = interpretExpression(statement.expression, environment);
   return;
 }
 
-function interpretPrintStmt(statement: PrintStmt): void {
-  const value = interpretExpression(statement.expression);
+function interpretPrintStmt(statement: PrintStmt, environment: Environment): void {
+  const value = interpretExpression(statement.expression, environment);
   console.log(stringify(value));
 }
 
@@ -53,23 +67,25 @@ export function stringify(value: any) {
  * This function does the real work of recurring down the AST
  * and interpreting everything.
  */
-export function interpretExpression(expr: Expr): LiteralValue {
+export function interpretExpression(expr: Expr, environment: Environment): LiteralValue {
   switch (expr.nodeType) {
     case "Literal":
       return expr.value;
     case "Grouping":
-      return interpretExpression(expr.expression);
+      return interpretExpression(expr.expression, environment);
     case "Unary":
-      return interpretUnary(expr);
+      return interpretUnary(expr, environment);
     case "Binary":
-      return interpretBinary(expr);
+      return interpretBinary(expr, environment);
     case "Ternary":
-      return interpretTernary(expr);
+      return interpretTernary(expr, environment);
+    case "Variable":
+      return interpretVariable(expr, environment);
   }
 }
 
-function interpretUnary(expr: Unary) {
-  const right = interpretExpression(expr.right);
+function interpretUnary(expr: Unary, environment: Environment) {
+  const right = interpretExpression(expr.right, environment);
 
   switch (expr.operator.type) {
     case TokenType.MINUS:
@@ -95,9 +111,9 @@ function isTruthy(value: LiteralValue): boolean {
   return true;
 }
 
-function interpretBinary(expr: Binary): LiteralValue {
-  const left = interpretExpression(expr.left);
-  const right = interpretExpression(expr.right);
+function interpretBinary(expr: Binary, environment: Environment): LiteralValue {
+  const left = interpretExpression(expr.left, environment);
+  const right = interpretExpression(expr.right, environment);
 
   switch (expr.operator.type) {
     case TokenType.MINUS:
@@ -155,16 +171,16 @@ function isEqual(a: LiteralValue, b: LiteralValue) {
   return a === b;
 }
 
-function interpretTernary(expr: Ternary) {
-  const condition = interpretExpression(expr.condition);
+function interpretTernary(expr: Ternary, environment: Environment) {
+  const condition = interpretExpression(expr.condition, environment);
 
   // let's do a short-circuit evaluation
 
   if (isTruthy(condition)) {
-    const ifTrue = interpretExpression(expr.whenTrue);
+    const ifTrue = interpretExpression(expr.whenTrue, environment);
     return ifTrue;
   } else {
-    const ifFalse = interpretExpression(expr.whenFalse);
+    const ifFalse = interpretExpression(expr.whenFalse, environment);
     return ifFalse;
   }
 }
@@ -185,4 +201,8 @@ function checkNumberOperands(operator: Token, left: any, right: any) {
     return;
   }
   throw new RuntimeError(operator, "Operands must be numbers");
+}
+
+function interpretVariable(expr: Variable, environment: Environment) {
+  return environment.get(expr.name)
 }
