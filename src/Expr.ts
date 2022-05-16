@@ -136,12 +136,35 @@ export function createUnary(
   return newUnary;
 }
 
+export interface Variable {
+  name: Token;
+  nodeType: "Variable";
+}
+
+/**
+ * Factory function for creating a Variable record
+ *
+ * Arguments:
+ * @param name Token
+ * @returns a Variable node
+ */
+export function createVariable(
+  name: Token,
+): Variable {
+  const newVariable: Variable = {
+    name,
+    nodeType: "Variable",
+  };
+  return newVariable;
+}
+
 export type Expr =
   | Ternary
   | Binary
   | Grouping
   | Literal
-  | Unary;
+  | Unary
+  | Variable;
 
 export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
   return [
@@ -150,5 +173,6 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Grouping",
     "Literal",
     "Unary",
+    "Variable",
   ].includes(ASTNode.nodeType);
 }

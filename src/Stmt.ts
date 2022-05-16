@@ -1,5 +1,5 @@
-import { Token } from "./Token.ts";
 import { Expr } from "./Expr.ts";
+import { Token } from "./Token.ts";
 
 export interface ExpressionStmt {
   expression: Expr;

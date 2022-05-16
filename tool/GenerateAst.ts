@@ -13,6 +13,7 @@ function main() {
       "Grouping | expression: Expr",
       "Literal  | value: LiteralValue",
       "Unary    | operator: Token, right: Expr",
+      "Variable | name: Token",
     ]);
 
     defineAst(outputDir, "Stmt", [
