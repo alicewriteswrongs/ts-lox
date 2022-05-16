@@ -149,6 +149,7 @@ export default class Parser {
   // program        → declaration* EOF ;
   // declaration    → varDecl
   //                | statement ;
+  // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
   //                | printStmt ;
   // exprStmt       → expression ";" ;
@@ -162,7 +163,8 @@ export default class Parser {
   // unary          → ( "!" | "-" ) unary
   //                | primary ;
   // primary        → NUMBER | STRING | "true" | "false" | "nil"
-  //                | "(" expression ")" ;
+  //                | "(" expression ")"
+  //                | IDENTIFIER ;
 
   /**
    * statement      → exprStmt
