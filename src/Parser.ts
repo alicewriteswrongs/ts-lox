@@ -162,7 +162,10 @@ export default class Parser {
   //                | printStmt ;
   // exprStmt       → expression ";" ;
   // printStmt      → "print" expression ";" ;
-  // expression     → ternary ("," ternary)* ;
+  // expression     → assignment ;
+  //                | ternary ("," ternary)* ;
+  // assignment     → IDENTIFIER "=" assignment
+  //                | ternary ;
   // ternary        → equality ("?" expression ":" ternary)?
   // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
   // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
