@@ -138,9 +138,9 @@ export default class Parser {
     try {
       const statements: Stmt[] = [];
       while (!this.isAtEnd()) {
-        const declaration = this.declaration()
+        const declaration = this.declaration();
         if (declaration) {
-          statements.push(declaration)
+          statements.push(declaration);
         }
       }
       return statements;
@@ -389,7 +389,7 @@ export default class Parser {
     }
 
     if (this.match(TokenType.IDENTIFIER)) {
-      return createVariable(this.previous())
+      return createVariable(this.previous());
     }
 
     if (this.match(TokenType.LEFT_PAREN)) {

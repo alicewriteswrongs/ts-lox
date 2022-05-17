@@ -7,9 +7,9 @@ import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
 export function interpret(statements: Stmt[], error: ErrorFunc) {
-  const environment = new Environment
+  const environment = new Environment();
   try {
-    statements.forEach(stmt => execute(stmt,  environment))
+    statements.forEach((stmt) => execute(stmt, environment));
   } catch (err) {
     if (err instanceof RuntimeError) {
       error(err.token.line, err.message);
@@ -21,7 +21,7 @@ function execute(statement: Stmt, environment: Environment) {
   switch (statement.nodeType) {
     case "VarStmt":
       interpretVarStmt(statement, environment);
-      break
+      break;
     case "ExpressionStmt":
       interpretExpressionStmt(statement, environment);
       break;
@@ -32,20 +32,26 @@ function execute(statement: Stmt, environment: Environment) {
 }
 
 function interpretVarStmt(statement: VarStmt, environment: Environment) {
-  let value = null
+  let value = null;
   if (statement.initializer) {
-    value = interpretExpression(statement.initializer, environment)
+    value = interpretExpression(statement.initializer, environment);
   }
 
-  environment.define(statement.name.lexeme, value)
+  environment.define(statement.name.lexeme, value);
 }
 
-function interpretExpressionStmt(statement: ExpressionStmt, environment: Environment): void {
+function interpretExpressionStmt(
+  statement: ExpressionStmt,
+  environment: Environment,
+): void {
   const _value = interpretExpression(statement.expression, environment);
   return;
 }
 
-function interpretPrintStmt(statement: PrintStmt, environment: Environment): void {
+function interpretPrintStmt(
+  statement: PrintStmt,
+  environment: Environment,
+): void {
   const value = interpretExpression(statement.expression, environment);
   console.log(stringify(value));
 }
@@ -67,7 +73,10 @@ export function stringify(value: any) {
  * This function does the real work of recurring down the AST
  * and interpreting everything.
  */
-export function interpretExpression(expr: Expr, environment: Environment): LiteralValue {
+export function interpretExpression(
+  expr: Expr,
+  environment: Environment,
+): LiteralValue {
   switch (expr.nodeType) {
     case "Literal":
       return expr.value;
@@ -204,5 +213,5 @@ function checkNumberOperands(operator: Token, left: any, right: any) {
 }
 
 function interpretVariable(expr: Variable, environment: Environment) {
-  return environment.get(expr.name)
+  return environment.get(expr.name);
 }

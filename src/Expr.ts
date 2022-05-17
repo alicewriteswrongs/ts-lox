@@ -1,6 +1,31 @@
 import { Token } from "./Token.ts";
 import { LiteralValue } from "./Literal.ts";
-import { Stmt } from "./Stmt.ts";
+
+export interface Assign {
+  name: Token;
+  value: Expr;
+  nodeType: "Assign";
+}
+
+/**
+ * Factory function for creating a Assign record
+ *
+ * Arguments:
+ * @param name Token
+ * @param value Expr
+ * @returns a Assign node
+ */
+export function createAssign(
+  name: Token,
+  value: Expr,
+): Assign {
+  const newAssign: Assign = {
+    name,
+    value,
+    nodeType: "Assign",
+  };
+  return newAssign;
+}
 
 export interface Ternary {
   condition: Expr;
@@ -159,6 +184,7 @@ export function createVariable(
 }
 
 export type Expr =
+  | Assign
   | Ternary
   | Binary
   | Grouping
@@ -168,6 +194,7 @@ export type Expr =
 
 export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
   return [
+    "Assign",
     "Ternary",
     "Binary",
     "Grouping",
