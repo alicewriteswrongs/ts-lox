@@ -1,5 +1,5 @@
 import { Environment } from "./Environment.ts";
-import { Binary, Expr, Ternary, Unary, Variable } from "./Expr.ts";
+import { Assign, Binary, Expr, Ternary, Unary, Variable } from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import { ExpressionStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
@@ -75,22 +75,30 @@ export function stringify(value: any) {
  */
 export function interpretExpression(
   expr: Expr,
-  environment: Environment,
+  env: Environment,
 ): LiteralValue {
   switch (expr.nodeType) {
+    case "Assign":
+      return interpretAssignExpression(expr, env);
     case "Literal":
       return expr.value;
     case "Grouping":
-      return interpretExpression(expr.expression, environment);
+      return interpretExpression(expr.expression, env);
     case "Unary":
-      return interpretUnary(expr, environment);
+      return interpretUnary(expr, env);
     case "Binary":
-      return interpretBinary(expr, environment);
+      return interpretBinary(expr, env);
     case "Ternary":
-      return interpretTernary(expr, environment);
+      return interpretTernary(expr, env);
     case "Variable":
-      return interpretVariable(expr, environment);
+      return interpretVariable(expr, env);
   }
+}
+
+function interpretAssignExpression(expr: Assign, env: Environment) {
+  const value = interpretExpression(expr.value, env);
+  env.assign(expr.name, value);
+  return value;
 }
 
 function interpretUnary(expr: Unary, environment: Environment) {

@@ -1,0 +1,4 @@
+var myvariable = 3;
+print myvariable;
+myvariable = 42;
+print myvariable;

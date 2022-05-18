@@ -1,4 +1,5 @@
 import {
+  createAssign,
   createBinary,
   createGrouping,
   createLiteral,
@@ -162,8 +163,7 @@ export default class Parser {
   //                | printStmt ;
   // exprStmt       → expression ";" ;
   // printStmt      → "print" expression ";" ;
-  // expression     → assignment ;
-  //                | ternary ("," ternary)* ;
+  // expression     → assignment ("," assignment)* ;
   // assignment     → IDENTIFIER "=" assignment
   //                | ternary ;
   // ternary        → equality ("?" expression ":" ternary)?
@@ -187,7 +187,7 @@ export default class Parser {
         return this.varDeclaration();
       }
       return this.statement();
-    } catch (err) {
+    } catch (_err) {
       this.synchronize();
     }
   }
@@ -239,7 +239,7 @@ export default class Parser {
   }
 
   /**
-   * expression → ternary ("," ternary)* ;
+   *  expression → assignment ("," assignment )* ;
    */
   expression(): Expr {
     if (BINARY_OPERATORS.includes(this.peek().type)) {
@@ -249,7 +249,7 @@ export default class Parser {
       );
     }
 
-    let expr = this.ternary();
+    let expr = this.assignment();
 
     while (
       this.match(
@@ -257,8 +257,30 @@ export default class Parser {
       )
     ) {
       const operator = this.previous();
-      const right = this.ternary();
+      const right = this.assignment();
       expr = createBinary(expr, operator, right);
+    }
+    return expr;
+  }
+
+  /** assignment     → IDENTIFIER "=" assignment
+   *                 | ternary ;
+   */
+  assignment(): Expr {
+    const expr = this.ternary();
+
+    if (this.match(TokenType.EQUAL)) {
+      const equals = this.previous();
+      const value = this.assignment();
+
+      if (expr.nodeType === "Variable") {
+        const name = expr.name;
+        return createAssign(
+          name,
+          value,
+        );
+      }
+      this.parserError(equals, "Invalid assignment target.");
     }
     return expr;
   }
