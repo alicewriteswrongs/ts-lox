@@ -6,6 +6,11 @@ import { ExpressionStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
+/**
+ * This is the entry point for the interpreter. It creates an environment and
+ * then wraps calling `execute` on all the statements it is passed in a try /
+ * catch.
+ */
 export function interpret(statements: Stmt[], error: ErrorFunc) {
   const environment = new Environment();
   try {
@@ -28,6 +33,9 @@ function execute(statement: Stmt, environment: Environment) {
     case "PrintStmt":
       interpretPrintStmt(statement, environment);
       break;
+    case "BlockStmt":
+      interpretBlockStmt(statement.statements, new Environment(environment));
+    break;
   }
 }
 
@@ -54,6 +62,12 @@ function interpretPrintStmt(
 ): void {
   const value = interpretExpression(statement.expression, environment);
   console.log(stringify(value));
+}
+
+function interpretBlockStmt(statements: Stmt[], env: Environment) {
+  for (const statement of statements) {
+    execute(statement, env)
+  }
 }
 
 export function stringify(value: any) {

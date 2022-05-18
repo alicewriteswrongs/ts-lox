@@ -9,6 +9,7 @@ import {
   Expr,
 } from "./Expr.ts";
 import {
+createBlockStmt,
   createExpressionStmt,
   createPrintStmt,
   createVarStmt,
@@ -196,14 +197,17 @@ export default class Parser {
 
   /**
    * statement → exprStmt
-   *           | printStmt ;
+   *           | printStmt
+   *           | block ;
    */
   statement(): Stmt {
     if (this.match(TokenType.PRINT)) {
-      return this.printStatement();
-    } else {
-      return this.expressionStatement();
+      return this.printStatement()
     }
+    if (this.match(TokenType.LEFT_BRACE)) {
+      return createBlockStmt(this.block())
+    }
+    return this.expressionStatement();
   }
 
   /**
@@ -238,6 +242,23 @@ export default class Parser {
     const expr = this.expression();
     this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
     return createExpressionStmt(expr);
+  }
+
+  /**
+   * block → "{" declaration "}" ;
+   */
+  block(): Stmt[] {
+    const statements = []
+
+    while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+      const declaration = this.declaration()
+      if (declaration) {
+        statements.push(declaration)
+      }
+    }
+
+    this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+    return statements
   }
 
   /**
