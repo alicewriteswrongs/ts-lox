@@ -1,6 +1,28 @@
 import { Expr } from "./Expr.ts";
 import { Token } from "./Token.ts";
 
+export interface BlockStmt {
+  statements: Stmt[];
+  nodeType: "BlockStmt";
+}
+
+/**
+ * Factory function for creating a BlockStmt record
+ *
+ * Arguments:
+ * @param statements Stmt[]
+ * @returns a BlockStmt node
+ */
+export function createBlockStmt(
+  statements: Stmt[],
+): BlockStmt {
+  const newBlockStmt: BlockStmt = {
+    statements,
+    nodeType: "BlockStmt",
+  };
+  return newBlockStmt;
+}
+
 export interface ExpressionStmt {
   expression: Expr;
   nodeType: "ExpressionStmt";
@@ -72,12 +94,14 @@ export function createVarStmt(
 }
 
 export type Stmt =
+  | BlockStmt
   | ExpressionStmt
   | PrintStmt
   | VarStmt;
 
 export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
   return [
+    "BlockStmt",
     "ExpressionStmt",
     "PrintStmt",
     "VarStmt",

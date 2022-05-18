@@ -18,6 +18,7 @@ function main() {
     ]);
 
     defineAst(outputDir, "Stmt", [
+      "BlockStmt      | statements: Stmt[]",
       "ExpressionStmt | expression: Expr",
       "PrintStmt      | expression: Expr",
       "VarStmt        | name: Token, initializer?: Expr",
