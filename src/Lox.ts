@@ -65,7 +65,7 @@ export class Lox {
   repl(source: string, environment: Environment) {
     const statements = this.parseSource(source);
 
-    if (statements[0].nodeType === "ExpressionStmt") {
+    if (statements[0] && statements[0].nodeType === "ExpressionStmt") {
       const { expression } = statements[0];
       // this is a bit of a hack, but enables the normal behavior you'd
       // expect in a REPL where typing in the name of a variable will just

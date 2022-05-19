@@ -20,6 +20,7 @@ function main() {
     defineAst(outputDir, "Stmt", [
       "BlockStmt      | statements: Stmt[]",
       "ExpressionStmt | expression: Expr",
+      "IfStmt         | condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
       "PrintStmt      | expression: Expr",
       "VarStmt        | name: Token, initializer?: Expr",
     ]);

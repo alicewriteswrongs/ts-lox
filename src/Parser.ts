@@ -161,9 +161,11 @@ export default class Parser {
   //                | statement ;
   // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
+  //                | ifStmt
   //                | printStmt
   //                | block ;
   // exprStmt       → expression ";" ;
+  // ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
   // printStmt      → "print" expression ";" ;
   // block          → "{" declaration "}" ;
   // expression     → assignment ("," assignment)* ;

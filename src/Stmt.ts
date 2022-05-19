@@ -1,5 +1,5 @@
-import { Expr } from "./Expr.ts";
 import { Token } from "./Token.ts";
+import { Expr } from "./Expr.ts";
 
 export interface BlockStmt {
   statements: Stmt[];
@@ -43,6 +43,36 @@ export function createExpressionStmt(
     nodeType: "ExpressionStmt",
   };
   return newExpressionStmt;
+}
+
+export interface IfStmt {
+  condition: Expr;
+  thenBranch: Stmt;
+  elseBranch?: Stmt;
+  nodeType: "IfStmt";
+}
+
+/**
+ * Factory function for creating a IfStmt record
+ *
+ * Arguments:
+ * @param condition Expr
+ * @param thenBranch Stmt
+ * @param elseBranch? Stmt
+ * @returns a IfStmt node
+ */
+export function createIfStmt(
+  condition: Expr,
+  thenBranch: Stmt,
+  elseBranch?: Stmt,
+): IfStmt {
+  const newIfStmt: IfStmt = {
+    condition,
+    thenBranch,
+    elseBranch,
+    nodeType: "IfStmt",
+  };
+  return newIfStmt;
 }
 
 export interface PrintStmt {
@@ -96,6 +126,7 @@ export function createVarStmt(
 export type Stmt =
   | BlockStmt
   | ExpressionStmt
+  | IfStmt
   | PrintStmt
   | VarStmt;
 
@@ -103,6 +134,7 @@ export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
   return [
     "BlockStmt",
     "ExpressionStmt",
+    "IfStmt",
     "PrintStmt",
     "VarStmt",
   ].includes(ASTNode.nodeType);
