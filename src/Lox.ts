@@ -1,7 +1,9 @@
 #!/usr/bin/env -S deno run --allow-read
-import { interpret } from "./Interpreter.ts";
+import { Environment } from "./Environment.ts";
+import { interpret, interpretExpression, stringify } from "./Interpreter.ts";
 import Parser from "./Parser.ts";
 import { Scanner } from "./Scanner.ts";
+import { Stmt } from "./Stmt.ts";
 
 export class Lox {
   hadError = false;
@@ -31,14 +33,15 @@ export class Lox {
   }
 
   runPrompt() {
+    const replRootEnvironment = new Environment();
     while (true) {
       const input = prompt(">");
-      this.run(input ?? "");
+      this.repl(input ?? "", replRootEnvironment);
       this.hadError = false;
     }
   }
 
-  run(source: string) {
+  parseSource(source: string): Stmt[] {
     // create a scanner and scan it to produce a list of tokens
     const scanner = new Scanner(
       source,
@@ -52,6 +55,33 @@ export class Lox {
       (line: number, message: string) => this.error(line, message),
     );
     const statements = parser.parse();
+    if (statements) {
+      return statements
+    } else {
+      return []
+    }
+  }
+      
+  repl(source: string, environment: Environment) {
+    const statements = this.parseSource(source)
+
+    if (statements[0].nodeType === "ExpressionStmt") {
+        const { expression } = statements[0];
+        // this is a bit of a hack, but enables the normal behavior you'd
+        // expect in a REPL where typing in the name of a variable will just
+        // print it out for you.
+        console.log(stringify(interpretExpression(expression, environment)));
+    } else {
+      interpret(
+        statements,
+        (line: number, message: string) => this.error(line, message),
+        environment
+      )
+    }
+  }
+
+  run(source: string) {
+    const statements = this.parseSource(source)
 
     // interpret that expression and show the result
     if (statements) {

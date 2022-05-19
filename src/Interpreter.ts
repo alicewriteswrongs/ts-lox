@@ -10,11 +10,16 @@ import { ErrorFunc } from "./types/error.ts";
  * This is the entry point for the interpreter. It creates an environment and
  * then wraps calling `execute` on all the statements it is passed in a try /
  * catch.
+ *
+ * There is an optional `environment` param for this function which is used to
+ * allow setting variables in the REPL — in the REPL we call `interpret` on
+ * each line, but in order to allow variables to be set and used again later we
+ * need to keep an `Environment` around between calls to `interpret`.
  */
-export function interpret(statements: Stmt[], error: ErrorFunc) {
-  const environment = new Environment();
+export function interpret(statements: Stmt[], error: ErrorFunc, environment?: Environment) {
+  const env = environment || new Environment();
   try {
-    statements.forEach((stmt) => execute(stmt, environment));
+    statements.forEach((stmt) => execute(stmt, env));
   } catch (err) {
     if (err instanceof RuntimeError) {
       error(err.token.line, err.message);
@@ -52,7 +57,7 @@ function interpretExpressionStmt(
   statement: ExpressionStmt,
   environment: Environment,
 ): void {
-  const _value = interpretExpression(statement.expression, environment);
+  const value = interpretExpression(statement.expression, environment);
   return;
 }
 
