@@ -9,7 +9,7 @@ import {
   Expr,
 } from "./Expr.ts";
 import {
-createBlockStmt,
+  createBlockStmt,
   createExpressionStmt,
   createPrintStmt,
   createVarStmt,
@@ -202,10 +202,10 @@ export default class Parser {
    */
   statement(): Stmt {
     if (this.match(TokenType.PRINT)) {
-      return this.printStatement()
+      return this.printStatement();
     }
     if (this.match(TokenType.LEFT_BRACE)) {
-      return createBlockStmt(this.block())
+      return createBlockStmt(this.block());
     }
     return this.expressionStatement();
   }
@@ -248,17 +248,17 @@ export default class Parser {
    * block → "{" declaration "}" ;
    */
   block(): Stmt[] {
-    const statements = []
+    const statements = [];
 
     while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
-      const declaration = this.declaration()
+      const declaration = this.declaration();
       if (declaration) {
-        statements.push(declaration)
+        statements.push(declaration);
       }
     }
 
     this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
-    return statements
+    return statements;
   }
 
   /**

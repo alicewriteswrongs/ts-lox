@@ -35,7 +35,7 @@ function execute(statement: Stmt, environment: Environment) {
       break;
     case "BlockStmt":
       interpretBlockStmt(statement.statements, new Environment(environment));
-    break;
+      break;
   }
 }
 
@@ -66,7 +66,7 @@ function interpretPrintStmt(
 
 function interpretBlockStmt(statements: Stmt[], env: Environment) {
   for (const statement of statements) {
-    execute(statement, env)
+    execute(statement, env);
   }
 }
 
