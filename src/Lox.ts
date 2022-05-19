@@ -56,32 +56,32 @@ export class Lox {
     );
     const statements = parser.parse();
     if (statements) {
-      return statements
+      return statements;
     } else {
-      return []
+      return [];
     }
   }
-      
+
   repl(source: string, environment: Environment) {
-    const statements = this.parseSource(source)
+    const statements = this.parseSource(source);
 
     if (statements[0].nodeType === "ExpressionStmt") {
-        const { expression } = statements[0];
-        // this is a bit of a hack, but enables the normal behavior you'd
-        // expect in a REPL where typing in the name of a variable will just
-        // print it out for you.
-        console.log(stringify(interpretExpression(expression, environment)));
+      const { expression } = statements[0];
+      // this is a bit of a hack, but enables the normal behavior you'd
+      // expect in a REPL where typing in the name of a variable will just
+      // print it out for you.
+      console.log(stringify(interpretExpression(expression, environment)));
     } else {
       interpret(
         statements,
         (line: number, message: string) => this.error(line, message),
-        environment
-      )
+        environment,
+      );
     }
   }
 
   run(source: string) {
-    const statements = this.parseSource(source)
+    const statements = this.parseSource(source);
 
     // interpret that expression and show the result
     if (statements) {

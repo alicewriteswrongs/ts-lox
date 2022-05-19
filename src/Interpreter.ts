@@ -16,7 +16,11 @@ import { ErrorFunc } from "./types/error.ts";
  * each line, but in order to allow variables to be set and used again later we
  * need to keep an `Environment` around between calls to `interpret`.
  */
-export function interpret(statements: Stmt[], error: ErrorFunc, environment?: Environment) {
+export function interpret(
+  statements: Stmt[],
+  error: ErrorFunc,
+  environment?: Environment,
+) {
   const env = environment || new Environment();
   try {
     statements.forEach((stmt) => execute(stmt, env));
