@@ -29,26 +29,44 @@ const testParsing = (source: string) => {
   return { parser, logStub };
 };
 
-test("should parse a simple binary expression", () => {
-  const AST = testParsing("1 + 2;").parser.parse();
-  if (AST) {
-    console.log(AST
-               );
-    assertNotEquals(AST[0], null);
-    assertEquals(AST[0].nodeType, "ExpressionStmt");
-    assertEquals(printAST(AST), "(+ 1 2)");
-  }
-});
+function testParsesToAST(
+  [source, printedAST]: TemplateStringsArray,
+  testName: string,
+) {
+  test(testName, () => {
+    const AST = testParsing(source).parser.parse() ?? [];
+    assertEquals(printAST(AST), printedAST);
+  });
+}
 
-test("should parse a ternary correctly", () => {
-  const AST = testParsing("1 ? 2 : 3;").parser.parse() ?? [];
-  assertEquals(printAST(AST), "(Ternary 1 2 3)");
-});
+testParsesToAST`1 + 2;${"should parse a binary expression"}ExpressionStatement
+  BinaryExpression +
+    LiteralExpression 1
+    LiteralExpression 2`;
 
-test("should parse nested ternaries correctly", () => {
-  const AST = testParsing("1 ? 4 ? 5 : 6 : 3;").parser.parse() ?? [];
-  assertEquals(printAST(AST), "(Ternary 1 (Ternary 4 5 6) 3)");
-});
+testParsesToAST
+  `var mynum = 3;${"should parse a variable statement"}VariableStatement mynum
+  LiteralExpression 3`;
+
+testParsesToAST`-1;${"should parse a negation"}ExpressionStatement
+  UnaryExpression Minus
+    LiteralExpression 1`;
+
+testParsesToAST`1 ? 2 : 3;${"should parse a simple ternary"}ExpressionStatement
+  TernaryExpression
+    LiteralExpression 1
+    LiteralExpression 2
+    LiteralExpression 3`;
+
+testParsesToAST
+  `1 ? 4 ? 5 : 6 : 3;${"should parse nested ternaries correctly"}ExpressionStatement
+  TernaryExpression
+    LiteralExpression 1
+    TernaryExpression
+      LiteralExpression 4
+      LiteralExpression 5
+      LiteralExpression 6
+    LiteralExpression 3`;
 
 //
 ["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
@@ -105,13 +123,12 @@ test("should parse nested ternaries correctly", () => {
 });
 
 test("it should error if you say 'var' with no identifier", () => {
-  const { parser, logStub } = testParsing("var = 3;")
-
-})
-
-test('print if statement', () => {
-  const { parser, logStub } = testParsing("if (foo) 3;")
-  const AST = parser.parse() ?? [];
-  console.log(printAST(AST))
-
-})
+  const { parser, logStub } = testParsing("var = 3;");
+  parser.parse();
+  assertSpyCall(logStub, 0, {
+    args: [
+      1,
+      "Expect variable name.",
+    ],
+  });
+});

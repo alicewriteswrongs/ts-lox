@@ -45,8 +45,8 @@ function execute(statement: Stmt, environment: Environment) {
     case "BlockStmt":
       interpretBlockStmt(statement.statements, new Environment(environment));
       break;
-      case "IfStmt":
-        interpretIfStmt(statement, environment)
+    case "IfStmt":
+      interpretIfStmt(statement, environment);
   }
 }
 
@@ -85,9 +85,9 @@ function interpretIfStmt(stmt: IfStmt, environment: Environment) {
   if (isTruthy(interpretExpression(stmt.condition, environment))) {
     execute(stmt.thenBranch, environment);
   } else if (stmt.elseBranch !== undefined) {
-    execute(stmt.elseBranch, environment)
+    execute(stmt.elseBranch, environment);
   }
-  return null
+  return null;
 }
 
 export function stringify(value: any) {

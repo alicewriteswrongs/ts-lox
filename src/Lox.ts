@@ -80,7 +80,7 @@ export class Lox {
       );
     }
 
-    console.log(printAST(statements ?? []))
+    console.log(printAST(statements ?? []));
   }
 
   run(source: string) {

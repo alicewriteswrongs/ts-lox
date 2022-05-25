@@ -235,12 +235,12 @@ export default class Parser {
    * ifStmt → "if" "(" expression ")" statement ( "else" statement )? ;
    */
   ifStatement(): Stmt {
-    this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.")
+    this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
 
-    const condition = this.expression()
-    this.consume(TokenType.RIGHT_PAREN, "Expect ')' after 'if'.")
+    const condition = this.expression();
+    this.consume(TokenType.RIGHT_PAREN, "Expect ')' after 'if'.");
 
-    const thenBranch = this.statement()
+    const thenBranch = this.statement();
     let elseBranch;
 
     if (this.match(TokenType.ELSE)) {
