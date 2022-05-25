@@ -2,4 +2,6 @@ var if_statements_work = true;
 
 if (if_statements_work) {
     print "they work!";
+} else {
+    print "they don't :(";
 }

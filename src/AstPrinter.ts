@@ -17,14 +17,14 @@ export function printAST(ast: AST, nesting = "") {
         const { condition, thenBranch, elseBranch } = stmt;
 
         lines.push("IfStatement");
-        lines.push(nesting + "  Condition:");
+        lines.push(nesting + "  Condition");
         printExpressionNode(condition, nesting + "    ");
         lines.push(nesting + "  ThenBranch");
         printStatementNode(thenBranch, nesting + "    ");
 
         if (elseBranch) {
           lines.push(nesting + "  ElseBranch");
-          printStatementNode(thenBranch, nesting + "    ");
+          printStatementNode(elseBranch, nesting + "    ");
         }
         break;
       }
@@ -91,6 +91,8 @@ export function printAST(ast: AST, nesting = "") {
       case "Literal": {
         if (expr.value == null) {
           lines.push(nesting + "LiteralExpression nil");
+        } else if (typeof expr.value === "string") {
+          lines.push(nesting + `LiteralExpression "${expr.value.toString()}"`);
         } else {
           lines.push(nesting + `LiteralExpression ${expr.value.toString()}`);
         }

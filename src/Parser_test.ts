@@ -68,6 +68,38 @@ testParsesToAST
       LiteralExpression 6
     LiteralExpression 3`;
 
+testParsesToAST`var foo = 3;
+var result = 1 + foo;${
+  "should parse declaring a variable, binding the addition"
+}VariableStatement foo
+  LiteralExpression 3
+VariableStatement result
+  BinaryExpression +
+    LiteralExpression 1
+    VariableExpression foo`;
+
+testParsesToAST`var if_statements_work = true;
+
+if (if_statements_work) {
+    print "they work!";
+} else {
+    print "they don't :(";
+}${
+  "test parsing if statements and print statements"
+}VariableStatement if_statements_work
+  LiteralExpression true
+IfStatement
+  Condition
+    VariableExpression if_statements_work
+  ThenBranch
+    BlockStatement
+      PrintStatement
+        LiteralExpression "they work!"
+  ElseBranch
+    BlockStatement
+      PrintStatement
+        LiteralExpression "they don't :("`;
+
 //
 ["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
   test(`should give an error for malformed ternaries ${JSON.stringify(badOne)}`, () => {
