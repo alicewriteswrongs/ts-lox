@@ -2,7 +2,7 @@ import { Environment } from "./Environment.ts";
 import { Assign, Binary, Expr, Ternary, Unary, Variable } from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
 import { RuntimeError } from "./RuntimeError.ts";
-import { ExpressionStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
+import { ExpressionStmt, IfStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 
@@ -45,6 +45,8 @@ function execute(statement: Stmt, environment: Environment) {
     case "BlockStmt":
       interpretBlockStmt(statement.statements, new Environment(environment));
       break;
+      case "IfStmt":
+        interpretIfStmt(statement, environment)
   }
 }
 
@@ -77,6 +79,15 @@ function interpretBlockStmt(statements: Stmt[], env: Environment) {
   for (const statement of statements) {
     execute(statement, env);
   }
+}
+
+function interpretIfStmt(stmt: IfStmt, environment: Environment) {
+  if (isTruthy(interpretExpression(stmt.condition, environment))) {
+    execute(stmt.thenBranch, environment);
+  } else if (stmt.elseBranch !== undefined) {
+    execute(stmt.elseBranch, environment)
+  }
+  return null
 }
 
 export function stringify(value: any) {

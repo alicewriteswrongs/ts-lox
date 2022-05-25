@@ -11,6 +11,7 @@ import {
 import {
   createBlockStmt,
   createExpressionStmt,
+  createIfStmt,
   createPrintStmt,
   createVarStmt,
 } from "./Stmt.ts";
@@ -203,6 +204,9 @@ export default class Parser {
    *           | block ;
    */
   statement(): Stmt {
+    if (this.match(TokenType.IF)) {
+      return this.ifStatement();
+    }
     if (this.match(TokenType.PRINT)) {
       return this.printStatement();
     }
@@ -225,6 +229,24 @@ export default class Parser {
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
     return createVarStmt(name, initializer);
+  }
+
+  /**
+   * ifStmt → "if" "(" expression ")" statement ( "else" statement )? ;
+   */
+  ifStatement(): Stmt {
+    this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.")
+
+    const condition = this.expression()
+    this.consume(TokenType.RIGHT_PAREN, "Expect ')' after 'if'.")
+
+    const thenBranch = this.statement()
+    let elseBranch;
+
+    if (this.match(TokenType.ELSE)) {
+      elseBranch = this.statement();
+    }
+    return createIfStmt(condition, thenBranch, elseBranch);
   }
 
   /**

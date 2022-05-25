@@ -9,6 +9,7 @@ import {
 } from "https://deno.land/std@0.137.0/testing/mock.ts";
 import Parser from "./Parser.ts";
 import { Scanner } from "./Scanner.ts";
+import { ExpressionStmt } from "./Stmt.ts";
 const { test } = Deno;
 
 const testParsing = (source: string) => {
@@ -29,26 +30,29 @@ const testParsing = (source: string) => {
 };
 
 test("should parse a simple binary expression", () => {
-  const AST = testParsing("1 + 2").parser.parse();
+  const AST = testParsing("1 + 2;").parser.parse();
   if (AST) {
+    console.log(AST
+               );
     assertNotEquals(AST[0], null);
-    assertEquals(AST[0].nodeType, "Binary");
-    assertEquals(printAST(AST[0]), "(+ 1 2)");
+    assertEquals(AST[0].nodeType, "ExpressionStmt");
+    const stmt = AST[0] as ExpressionStmt;
+    assertEquals(printAST(stmt.expression!), "(+ 1 2)");
   }
 });
 
 test("should parse a ternary correctly", () => {
-  const AST = testParsing("1 ? 2 : 3").parser.parse();
+  const AST = testParsing("1 ? 2 : 3;").parser.parse();
   assertEquals(printAST(AST![0]), "(Ternary 1 2 3)");
 });
 
 test("should parse nested ternaries correctly", () => {
-  const AST = testParsing("1 ? 4 ? 5 : 6 : 3").parser.parse();
+  const AST = testParsing("1 ? 4 ? 5 : 6 : 3;").parser.parse();
   assertEquals(printAST(AST![0]), "(Ternary 1 (Ternary 4 5 6) 3)");
 });
 
 //
-["1 ? 2", "1 ? 2 ? 3", "1 ? true"].forEach((badOne) => {
+["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
   test(`should give an error for malformed ternaries ${JSON.stringify(badOne)}`, () => {
     const { parser, logStub } = testParsing(badOne);
     parser.parse();
@@ -100,3 +104,8 @@ test("should parse nested ternaries correctly", () => {
     });
   });
 });
+
+test("it should error if you say 'var' with no identifier", () => {
+  const { parser, logStub } = testParsing("var = 3;")
+
+})
