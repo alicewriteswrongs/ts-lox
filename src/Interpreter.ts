@@ -5,6 +5,7 @@ import { RuntimeError } from "./RuntimeError.ts";
 import { ExpressionStmt, IfStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
+import { assertUnreachable } from "./util.ts";
 
 /**
  * This is the entry point for the interpreter. It creates an environment and
@@ -47,6 +48,9 @@ function execute(statement: Stmt, environment: Environment) {
       break;
     case "IfStmt":
       interpretIfStmt(statement, environment);
+      break;
+    default:
+      assertUnreachable(statement);
   }
 }
 
@@ -126,6 +130,8 @@ export function interpretExpression(
       return interpretTernary(expr, env);
     case "Variable":
       return interpretVariable(expr, env);
+    default:
+      assertUnreachable(expr);
   }
 }
 

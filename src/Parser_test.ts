@@ -69,9 +69,7 @@ testParsesToAST
     LiteralExpression 3`;
 
 testParsesToAST`var foo = 3;
-var result = 1 + foo;${
-  "should parse declaring a variable, binding the addition"
-}VariableStatement foo
+var result = 1 + foo;${"should parse declaring a variable, binding the addition"}VariableStatement foo
   LiteralExpression 3
 VariableStatement result
   BinaryExpression +
@@ -84,9 +82,7 @@ if (if_statements_work) {
     print "they work!";
 } else {
     print "they don't :(";
-}${
-  "test parsing if statements and print statements"
-}VariableStatement if_statements_work
+}${"test parsing if statements and print statements"}VariableStatement if_statements_work
   LiteralExpression true
 IfStatement
   Condition
