@@ -1,4 +1,5 @@
 #!/usr/bin/env -S deno run --allow-read
+import { printAST } from "./AstPrinter.ts";
 import { Environment } from "./Environment.ts";
 import { interpret, interpretExpression, stringify } from "./Interpreter.ts";
 import Parser from "./Parser.ts";
@@ -78,6 +79,8 @@ export class Lox {
         environment,
       );
     }
+
+    console.log(printAST(statements ?? []))
   }
 
   run(source: string) {

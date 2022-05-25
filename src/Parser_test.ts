@@ -36,19 +36,18 @@ test("should parse a simple binary expression", () => {
                );
     assertNotEquals(AST[0], null);
     assertEquals(AST[0].nodeType, "ExpressionStmt");
-    const stmt = AST[0] as ExpressionStmt;
-    assertEquals(printAST(stmt.expression!), "(+ 1 2)");
+    assertEquals(printAST(AST), "(+ 1 2)");
   }
 });
 
 test("should parse a ternary correctly", () => {
-  const AST = testParsing("1 ? 2 : 3;").parser.parse();
-  assertEquals(printAST(AST![0]), "(Ternary 1 2 3)");
+  const AST = testParsing("1 ? 2 : 3;").parser.parse() ?? [];
+  assertEquals(printAST(AST), "(Ternary 1 2 3)");
 });
 
 test("should parse nested ternaries correctly", () => {
-  const AST = testParsing("1 ? 4 ? 5 : 6 : 3;").parser.parse();
-  assertEquals(printAST(AST![0]), "(Ternary 1 (Ternary 4 5 6) 3)");
+  const AST = testParsing("1 ? 4 ? 5 : 6 : 3;").parser.parse() ?? [];
+  assertEquals(printAST(AST), "(Ternary 1 (Ternary 4 5 6) 3)");
 });
 
 //
@@ -107,5 +106,12 @@ test("should parse nested ternaries correctly", () => {
 
 test("it should error if you say 'var' with no identifier", () => {
   const { parser, logStub } = testParsing("var = 3;")
+
+})
+
+test('print if statement', () => {
+  const { parser, logStub } = testParsing("if (foo) 3;")
+  const AST = parser.parse() ?? [];
+  console.log(printAST(AST))
 
 })
