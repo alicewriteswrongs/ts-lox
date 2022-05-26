@@ -67,7 +67,7 @@ function interpretExpressionStmt(
   statement: ExpressionStmt,
   environment: Environment,
 ): void {
-  const value = interpretExpression(statement.expression, environment);
+  const _value = interpretExpression(statement.expression, environment);
   return;
 }
 
@@ -108,8 +108,8 @@ export function stringify(value: any) {
 }
 
 /**
- * This function does the real work of recurring down the AST
- * and interpreting everything.
+ * This function handles interpreting expressions, dispatching to specific
+ * functions for each type of expression that Lox supports.
  */
 export function interpretExpression(
   expr: Expr,
