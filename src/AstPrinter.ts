@@ -105,8 +105,9 @@ export function printAST(ast: AST, nesting = "") {
         break;
       }
       case "Logical": {
-        const expressionType = expr.operator.type === TokenType.AND ?
-          "And" : "Or";
+        const expressionType = expr.operator.type === TokenType.AND
+          ? "And"
+          : "Or";
         lines.push(nesting + `LogicalExpression ${expressionType}`);
         printExpressionNode(expr.left, nesting + "  ");
         printExpressionNode(expr.right, nesting + "  ");

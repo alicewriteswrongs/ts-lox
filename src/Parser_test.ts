@@ -96,8 +96,8 @@ IfStatement
       PrintStatement
         LiteralExpression "they don't :("`;
 
-testParsesToAST`true and false;${"should support 'and' keyword"
-}ExpressionStatement
+testParsesToAST
+  `true and false;${"should support 'and' keyword"}ExpressionStatement
   LogicalExpression And
     LiteralExpression true
     LiteralExpression false`;

@@ -1,5 +1,13 @@
 import { Environment } from "./Environment.ts";
-import { Assign, Binary, Expr, Ternary, Unary, Variable } from "./Expr.ts";
+import {
+  Assign,
+  Binary,
+  Expr,
+  Logical,
+  Ternary,
+  Unary,
+  Variable,
+} from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import { ExpressionStmt, IfStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
@@ -130,6 +138,8 @@ export function interpretExpression(
       return interpretTernary(expr, env);
     case "Variable":
       return interpretVariable(expr, env);
+    case "Logical":
+      return interpretLogical(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -262,4 +272,22 @@ function checkNumberOperands(operator: Token, left: any, right: any) {
 
 function interpretVariable(expr: Variable, environment: Environment) {
   return environment.get(expr.name);
+}
+
+function interpretLogical(expr: Logical, environment: Environment) {
+  const left = interpretExpression(expr.left, environment);
+
+  if (expr.operator.type === TokenType.OR) {
+    // if we have an OR, short-circuit by looking at `left` first
+    // and return if it is truthy
+    if (isTruthy(left)) return left;
+  } else {
+    // if we have an AND, short-circuit by looking at `left first
+    // and return it if it is _not_ truthy
+    // thus if you `false and foobar()` we return false early
+    // without bothering to call foobar
+    if (!isTruthy(left)) return left;
+  }
+
+  return interpretExpression(expr.right, environment);
 }
