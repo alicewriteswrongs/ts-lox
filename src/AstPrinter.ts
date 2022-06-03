@@ -1,5 +1,6 @@
 import { Expr } from "./Expr.ts";
 import { Stmt } from "./Stmt.ts";
+import { TokenType } from "./Token.ts";
 import { assertUnreachable } from "./util.ts";
 
 type AST = Stmt[];
@@ -100,6 +101,14 @@ export function printAST(ast: AST, nesting = "") {
       }
       case "Unary": {
         lines.push(nesting + `UnaryExpression ${expr.operator.type}`);
+        printExpressionNode(expr.right, nesting + "  ");
+        break;
+      }
+      case "Logical": {
+        const expressionType = expr.operator.type === TokenType.AND ?
+          "And" : "Or";
+        lines.push(nesting + `LogicalExpression ${expressionType}`);
+        printExpressionNode(expr.left, nesting + "  ");
         printExpressionNode(expr.right, nesting + "  ");
         break;
       }

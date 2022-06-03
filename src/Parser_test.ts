@@ -96,6 +96,12 @@ IfStatement
       PrintStatement
         LiteralExpression "they don't :("`;
 
+testParsesToAST`true and false;${"should support 'and' keyword"
+}ExpressionStatement
+  LogicalExpression And
+    LiteralExpression true
+    LiteralExpression false`;
+
 //
 ["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
   test(`should give an error for malformed ternaries ${JSON.stringify(badOne)}`, () => {
