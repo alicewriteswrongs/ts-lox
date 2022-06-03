@@ -13,6 +13,7 @@ function main() {
       "Binary   | left: Expr, operator: Token, right: Expr",
       "Grouping | expression: Expr",
       "Literal  | value: LiteralValue",
+      "Logical  | left: Expr, operator: Token, right: Expr",
       "Unary    | operator: Token, right: Expr",
       "Variable | name: Token",
     ]);

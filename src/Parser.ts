@@ -172,7 +172,10 @@ export default class Parser {
   // expression     → assignment ("," assignment)* ;
   // assignment     → IDENTIFIER "=" assignment
   //                | ternary ;
+  //                | logic_or ;
   // ternary        → equality ("?" expression ":" ternary)?
+  // logic_or       → logic_and ( "or" logic_and )* ;
+  // logic_and      → equality ( "and" equality )* ;
   // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
   // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
   // term           → factor ( ( "-" | "+" ) factor )* ;

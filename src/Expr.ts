@@ -136,6 +136,36 @@ export function createLiteral(
   return newLiteral;
 }
 
+export interface Logical {
+  left: Expr;
+  operator: Token;
+  right: Expr;
+  nodeType: "Logical";
+}
+
+/**
+ * Factory function for creating a Logical record
+ *
+ * Arguments:
+ * @param left Expr
+ * @param operator Token
+ * @param right Expr
+ * @returns a Logical node
+ */
+export function createLogical(
+  left: Expr,
+  operator: Token,
+  right: Expr,
+): Logical {
+  const newLogical: Logical = {
+    left,
+    operator,
+    right,
+    nodeType: "Logical",
+  };
+  return newLogical;
+}
+
 export interface Unary {
   operator: Token;
   right: Expr;
@@ -190,6 +220,7 @@ export type Expr =
   | Binary
   | Grouping
   | Literal
+  | Logical
   | Unary
   | Variable;
 
@@ -200,6 +231,7 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Binary",
     "Grouping",
     "Literal",
+    "Logical",
     "Unary",
     "Variable",
   ].includes(ASTNode.nodeType);
