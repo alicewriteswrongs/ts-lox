@@ -3,6 +3,7 @@ import {
   createBinary,
   createGrouping,
   createLiteral,
+  createLogical,
   createTernary,
   createUnary,
   createVariable,
@@ -171,11 +172,10 @@ export default class Parser {
   // block          → "{" declaration "}" ;
   // expression     → assignment ("," assignment)* ;
   // assignment     → IDENTIFIER "=" assignment
-  //                | ternary ;
   //                | logic_or ;
-  // ternary        → equality ("?" expression ":" ternary)?
   // logic_or       → logic_and ( "or" logic_and )* ;
-  // logic_and      → equality ( "and" equality )* ;
+  // logic_and      → ternary ( "and" ternary )* ;
+  // ternary        → equality ("?" expression ":" ternary)?
   // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
   // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
   // term           → factor ( ( "-" | "+" ) factor )* ;
@@ -313,11 +313,12 @@ export default class Parser {
     return expr;
   }
 
-  /** assignment     → IDENTIFIER "=" assignment
-   *                 | ternary ;
+  /**
+   * assignment → IDENTIFIER "=" assignment
+   *            | logic_or ;
    */
   assignment(): Expr {
-    const expr = this.ternary();
+    const expr = this.or();
 
     if (this.match(TokenType.EQUAL)) {
       const equals = this.previous();
@@ -331,6 +332,35 @@ export default class Parser {
         );
       }
       this.parserError(equals, "Invalid assignment target.");
+    }
+    return expr;
+  }
+
+  /**
+   * logic_or → logic_and ( "or" logic_and )* ;
+   */
+  or(): Expr {
+    let expr = this.and();
+
+    while (this.match(TokenType.OR)) {
+      const operator = this.previous();
+      const right = this.and();
+      expr = createLogical(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  /**
+   * logic_and → ternary ( "and" ternary )* ;
+   */
+  and(): Expr {
+    let expr = this.ternary();
+
+    while (this.match(TokenType.AND)) {
+      const operator = this.previous();
+      const right = this.ternary();
+      expr = createLogical(expr, operator, right);
     }
     return expr;
   }
