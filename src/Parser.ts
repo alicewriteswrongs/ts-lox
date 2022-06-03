@@ -15,6 +15,7 @@ import {
   createIfStmt,
   createPrintStmt,
   createVarStmt,
+  createWhileStmt,
 } from "./Stmt.ts";
 import { Stmt } from "./Stmt.ts";
 import { BINARY_OPERATORS, Token, TokenType } from "./Token.ts";
@@ -165,10 +166,12 @@ export default class Parser {
   // statement      → exprStmt
   //                | ifStmt
   //                | printStmt
+  //                | whileStmt
   //                | block ;
   // exprStmt       → expression ";" ;
   // ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
   // printStmt      → "print" expression ";" ;
+  // whileStmt      → "while" "(" expression ")" statement ;
   // block          → "{" declaration "}" ;
   // expression     → assignment ("," assignment)* ;
   // assignment     → IDENTIFIER "=" assignment
@@ -203,7 +206,9 @@ export default class Parser {
 
   /**
    * statement → exprStmt
+   *           | ifStmt
    *           | printStmt
+   *           | whileStmt
    *           | block ;
    */
   statement(): Stmt {
@@ -215,6 +220,9 @@ export default class Parser {
     }
     if (this.match(TokenType.LEFT_BRACE)) {
       return createBlockStmt(this.block());
+    }
+    if (this.match(TokenType.WHILE)) {
+      return this.whileStatement();
     }
     return this.expressionStatement();
   }
@@ -232,6 +240,26 @@ export default class Parser {
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
     return createVarStmt(name, initializer);
+  }
+
+  /**
+   * whileStmt → "while" "(" expression ")" statement ;
+   */
+  whileStatement(): Stmt {
+    this.consume(TokenType.LEFT_PAREN, "Expect ( after a 'while' statement");
+
+    const expr = this.expression();
+    this.consume(
+      TokenType.RIGHT_PAREN,
+      "Expect ) after 'while' statement condition",
+    );
+    const body = this.statement();
+
+    const statement = createWhileStmt(
+      expr,
+      body,
+    );
+    return statement;
   }
 
   /**

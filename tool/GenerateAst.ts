@@ -24,6 +24,7 @@ function main() {
       "IfStmt         | condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
       "PrintStmt      | expression: Expr",
       "VarStmt        | name: Token, initializer?: Expr",
+      "WhileStmt      | condition: Expr, body: Stmt",
     ]);
   }
 }

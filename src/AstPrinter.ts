@@ -55,6 +55,16 @@ export function printAST(ast: AST, nesting = "") {
         }
         break;
       }
+      case "WhileStmt": {
+        const { condition, body } = stmt;
+
+        lines.push(nesting + "WhileStatement");
+        lines.push(nesting + "  Condition");
+        printExpressionNode(condition, "    ");
+        lines.push(nesting + "  Body");
+        printStatementNode(body, "    ");
+        break;
+      }
       default:
         assertUnreachable(stmt);
     }

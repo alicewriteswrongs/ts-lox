@@ -10,7 +10,14 @@ import {
 } from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
 import { RuntimeError } from "./RuntimeError.ts";
-import { ExpressionStmt, IfStmt, PrintStmt, Stmt, VarStmt } from "./Stmt.ts";
+import {
+  ExpressionStmt,
+  IfStmt,
+  PrintStmt,
+  Stmt,
+  VarStmt,
+  WhileStmt,
+} from "./Stmt.ts";
 import { Token, TokenType } from "./Token.ts";
 import { ErrorFunc } from "./types/error.ts";
 import { assertUnreachable } from "./util.ts";
@@ -57,6 +64,9 @@ function execute(statement: Stmt, environment: Environment) {
     case "IfStmt":
       interpretIfStmt(statement, environment);
       break;
+    case "WhileStmt":
+      interpretWhileStmt(statement, environment);
+      break;
     default:
       assertUnreachable(statement);
   }
@@ -100,6 +110,12 @@ function interpretIfStmt(stmt: IfStmt, environment: Environment) {
     execute(stmt.elseBranch, environment);
   }
   return null;
+}
+
+function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
+  while (isTruthy(interpretExpression(stmt.condition, environment))) {
+    execute(stmt.body, environment);
+  }
 }
 
 export function stringify(value: any) {

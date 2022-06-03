@@ -123,12 +123,39 @@ export function createVarStmt(
   return newVarStmt;
 }
 
+export interface WhileStmt {
+  condition: Expr;
+  body: Stmt;
+  nodeType: "WhileStmt";
+}
+
+/**
+ * Factory function for creating a WhileStmt record
+ *
+ * Arguments:
+ * @param condition Expr
+ * @param body Stmt
+ * @returns a WhileStmt node
+ */
+export function createWhileStmt(
+  condition: Expr,
+  body: Stmt,
+): WhileStmt {
+  const newWhileStmt: WhileStmt = {
+    condition,
+    body,
+    nodeType: "WhileStmt",
+  };
+  return newWhileStmt;
+}
+
 export type Stmt =
   | BlockStmt
   | ExpressionStmt
   | IfStmt
   | PrintStmt
-  | VarStmt;
+  | VarStmt
+  | WhileStmt;
 
 export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
   return [
@@ -137,5 +164,6 @@ export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
     "IfStmt",
     "PrintStmt",
     "VarStmt",
+    "WhileStmt",
   ].includes(ASTNode.nodeType);
 }

@@ -102,6 +102,14 @@ testParsesToAST
     LiteralExpression true
     LiteralExpression false`;
 
+testParsesToAST
+  `while (true) print "foo";${"should support a simple 'while'"}WhileStatement
+  Condition
+    LiteralExpression true
+  Body
+    PrintStatement
+      LiteralExpression "foo"`;
+
 //
 ["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
   test(`should give an error for malformed ternaries ${JSON.stringify(badOne)}`, () => {
