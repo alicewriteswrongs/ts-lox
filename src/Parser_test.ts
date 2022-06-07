@@ -110,6 +110,25 @@ testParsesToAST
     PrintStatement
       LiteralExpression "foo"`;
 
+testParsesToAST
+  `for (var i = 0; i < 10; i = i + 1) print i;${"a for loop should desugar to a while loop"}BlockStatement
+  VariableStatement i
+    LiteralExpression 0
+  WhileStatement
+    Condition
+    BinaryExpression <
+      VariableExpression i
+      LiteralExpression 10
+    Body
+    BlockStatement
+      PrintStatement
+        VariableExpression i
+      ExpressionStatement
+        AssignmentExpression i
+          BinaryExpression +
+            VariableExpression i
+            LiteralExpression 1`;
+
 //
 ["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
   test(`should give an error for malformed ternaries ${JSON.stringify(badOne)}`, () => {
