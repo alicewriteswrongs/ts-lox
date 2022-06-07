@@ -5,6 +5,40 @@ import { assertUnreachable } from "./util.ts";
 
 type AST = Stmt[];
 
+/**
+ * An AST pretty printer which prints out a human-readable and simple
+ * visualization of the AST which shows structure through indentation
+ * and nesting.
+ *
+ * A simple bit of Lox code like `print "foo";` will be printed as:
+ *
+ * ```
+ * PrintStatement
+ *   LiteralExpression "foo"
+ * ```
+ *
+ * More complicated bits of code get a little more, well, complicated:
+ *
+ * ```
+ * while (shouldWeQuit ? false : true) {
+ *   print "hey!";
+ * }
+ * ```
+ * prints to
+ *
+ * ```
+ * WhileStatement
+ *   Condition
+ *     TernaryExpression
+ *       VariableExpression shouldWeQuit
+ *       LiteralExpression false
+ *       LiteralExpression true
+ *   Body
+ *     BlockStatement
+ *       PrintStatement
+ *         LiteralExpression "hey"
+ * ```
+ */
 export function printAST(ast: AST, nesting = "") {
   const lines: string[] = [];
 

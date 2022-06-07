@@ -159,16 +159,25 @@ export default class Parser {
   // below here are the methods which implement the grammar for our
   // language. Neat stuff!
   //
+  // My implementation of Lox includes the extensions that are presented
+  // at the end of chapters as optional exercises, so, for instance, I
+  // include support for a C-style ternary operator. For this reason the
+  // gammar here is _slightly_ different than the one in the book.
+  //
   // program        → declaration* EOF ;
   // declaration    → varDecl
   //                | statement ;
   // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
+  //                | forStmt
   //                | ifStmt
   //                | printStmt
   //                | whileStmt
   //                | block ;
   // exprStmt       → expression ";" ;
+  // forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+  //                  expression? ";"
+  //                  expression? ")" statement ;
   // ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
   // printStmt      → "print" expression ";" ;
   // whileStmt      → "while" "(" expression ")" statement ;
@@ -212,6 +221,9 @@ export default class Parser {
    *           | block ;
    */
   statement(): Stmt {
+    if (this.match(TokenType.FOR)) {
+      return this.forStatement();
+    }
     if (this.match(TokenType.IF)) {
       return this.ifStatement();
     }
@@ -225,6 +237,82 @@ export default class Parser {
       return this.whileStatement();
     }
     return this.expressionStatement();
+  }
+
+  /**
+   * For loops are, of course, equivalent to `while` loops, so there is
+   * no need for us to implement a special AST node to implement a `for` loop.
+   *
+   * Instead, here we desugar a `for` loop into an equivalent `while` loop.
+   *
+   * Thus
+   *
+   * ```
+   * for (var i = 0; i < 10; i = i + 1) print i;
+   * ```
+   *
+   * becomes
+   *
+   * ```
+   * {
+   *   var i = 0;
+   *   while (i < 10) {
+   *     print i;
+   *     i = i + 1;
+   *   }
+   * }
+   * ```
+   */
+  forStatement(): Stmt {
+    this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+    let initializer: Stmt | null = null;
+    if (this.match(TokenType.SEMICOLON)) {
+      initializer = null;
+    } else if (this.match(TokenType.VAR)) {
+      initializer = this.varDeclaration();
+    } else {
+      initializer = this.expressionStatement();
+    }
+
+    let condition: Expr | null = null;
+    if (!this.check(TokenType.SEMICOLON)) {
+      condition = this.expression();
+    }
+    this.consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+    let increment: Expr | null = null;
+    if (!this.check(TokenType.RIGHT_PAREN)) {
+      increment = this.expression();
+    }
+    this.consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+    let body = this.statement();
+
+    if (increment !== null) {
+      body = createBlockStmt(
+        // the body should be the actual body statements written in the code,
+        // plus the incrementation statement (if present)
+        [body, createExpressionStmt(increment)],
+      );
+    }
+
+    if (condition === null) {
+      // then the condition should always be true
+      condition = createLiteral(true);
+    }
+
+    body = createWhileStmt(condition, body);
+
+    // if the initialize is present, it should run before the `while` loop
+    if (initializer !== null) {
+      body = createBlockStmt([
+        initializer,
+        body,
+      ]);
+    }
+
+    return body;
   }
 
   /**
