@@ -159,9 +159,9 @@ export default class Parser {
   // below here are the methods which implement the grammar for our
   // language. Neat stuff!
   //
-  // My implementation of Lox includes the extensions that are presented
-  // at the end of chapters as optional exercises, so, for instance, I
-  // include support for a C-style ternary operator. For this reason the
+  // My implementation of Lox includes some of the extensions that are
+  // presented at the end of chapters as optional exercises, so, for instance,
+  // I include support for a C-style ternary operator. For this reason the
   // gammar here is _slightly_ different than the one in the book.
   //
   // program        → declaration* EOF ;
