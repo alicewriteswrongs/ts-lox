@@ -1,6 +1,7 @@
 import {
   createAssign,
   createBinary,
+  createCall,
   createGrouping,
   createLiteral,
   createLogical,
@@ -574,8 +575,7 @@ export default class Parser {
   }
 
   /**
-   * unary → ( "!" | "-" ) unary
-   *       | primary ;
+   * unary → ( "!" | "-" ) unary | call ;
    */
   unary(): Expr {
     if (this.match(TokenType.BANG, TokenType.MINUS)) {
@@ -583,7 +583,44 @@ export default class Parser {
       const right = this.unary();
       return createUnary(operator, right);
     }
-    return this.primary();
+    return this.call();
+  }
+
+  /**
+   * call → primary ( "(" arguments? ")" )* ;
+   */
+  call(): Expr {
+    let expr = this.primary();
+
+    while (true) {
+      if (this.match(TokenType.LEFT_PAREN)) {
+        expr = this.finishCall(expr);
+      } else {
+        break;
+      }
+    }
+    return expr;
+  }
+
+  finishCall(callee: Expr) {
+    const args: Expr[] = [];
+
+    if (!this.check(TokenType.RIGHT_PAREN)) {
+      while (this.match(TokenType.COMMA)) {
+        // everything in moderation
+        if (args.length >= 255) {
+          this.parserError(this.peek(), "Can't have more than 255 arguments");
+        }
+        args.push(this.expression());
+      }
+    }
+
+    const paren = this.consume(
+      TokenType.RIGHT_PAREN,
+      "Expect ')' after arguments.",
+    );
+
+    return createCall(callee, paren, args);
   }
 
   /**
