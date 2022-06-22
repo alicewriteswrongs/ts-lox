@@ -11,6 +11,7 @@ function main() {
       "Assign   | name: Token, value: Expr",
       "Ternary  | condition: Expr, token: Token, whenTrue: Expr, whenFalse: Expr",
       "Binary   | left: Expr, operator: Token, right: Expr",
+      "Call     | callee: Expr, paren: Token, arguments: Expr[]",
       "Grouping | expression: Expr",
       "Literal  | value: LiteralValue",
       "Logical  | left: Expr, operator: Token, right: Expr",

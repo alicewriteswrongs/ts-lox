@@ -92,6 +92,36 @@ export function createBinary(
   return newBinary;
 }
 
+export interface Call {
+  callee: Expr;
+  paren: Token;
+  arguments: Expr[];
+  nodeType: "Call";
+}
+
+/**
+ * Factory function for creating a Call record
+ *
+ * Arguments:
+ * @param callee Expr
+ * @param paren Token
+ * @param arguments Expr[]
+ * @returns a Call node
+ */
+export function createCall(
+  callee: Expr,
+  paren: Token,
+  arguments: Expr[],
+): Call {
+  const newCall: Call = {
+    callee,
+    paren,
+    arguments,
+    nodeType: "Call",
+  };
+  return newCall;
+}
+
 export interface Grouping {
   expression: Expr;
   nodeType: "Grouping";
@@ -218,6 +248,7 @@ export type Expr =
   | Assign
   | Ternary
   | Binary
+  | Call
   | Grouping
   | Literal
   | Logical
@@ -229,6 +260,7 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Assign",
     "Ternary",
     "Binary",
+    "Call",
     "Grouping",
     "Literal",
     "Logical",

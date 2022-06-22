@@ -192,10 +192,11 @@ export default class Parser {
   // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
   // term           → factor ( ( "-" | "+" ) factor )* ;
   // factor         → unary ( ( "/" | "*" ) unary )* ;
-  // unary          → ( "!" | "-" ) unary
-  //                | primary ;
+  // unary          → ( "!" | "-" ) unary | call ;
+  // call           → primary ( "(" arguments? ")" )* ;
   // primary        → NUMBER | STRING | "true" | "false" | "nil"
   //                | "(" expression ")"
+  // arguments      → expression ( "," expression )* ;
   //                | IDENTIFIER ;
 
   /**
