@@ -2,6 +2,7 @@ import { Environment } from "./Environment.ts";
 import {
   Assign,
   Binary,
+  Call,
   Expr,
   Logical,
   Ternary,
@@ -9,6 +10,7 @@ import {
   Variable,
 } from "./Expr.ts";
 import { LiteralValue } from "./Literal.ts";
+import { isLoxCallable } from "./LoxCallable.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import {
   ExpressionStmt,
@@ -156,6 +158,8 @@ export function interpretExpression(
       return interpretVariable(expr, env);
     case "Logical":
       return interpretLogical(expr, env);
+    case "Call":
+      return interpretCall(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -306,4 +310,26 @@ function interpretLogical(expr: Logical, environment: Environment) {
   }
 
   return interpretExpression(expr.right, environment);
+}
+
+function interpretCall(expr: Call, environment: Environment) {
+  const callee = interpretExpression(expr.callee);
+
+  const evaluatedArgs = expr.args.map(argument => interpretExpression(argument, environment))
+
+  if (!isLoxCallable(callee)) {
+      throw new RuntimeError(
+        expr.paren,
+        "Can only call functions and classes."
+      );
+  }
+
+  if (callee.arity() !== evaluatedArgs.length) {
+    throw new RuntimeError(
+      expr.paren,
+      `Expected ${callee.arity()} arguments but got ${evaluatedArgs.length}`
+    );
+  }
+
+  return callee.call(environment, evaluatedArgs)
 }
