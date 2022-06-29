@@ -602,16 +602,21 @@ export default class Parser {
     return expr;
   }
 
-  finishCall(callee: Expr) {
+  finishCall(callee: Expr): Expr {
     const args: Expr[] = [];
 
     if (!this.check(TokenType.RIGHT_PAREN)) {
-      while (this.match(TokenType.COMMA)) {
-        // everything in moderation
-        if (args.length >= 255) {
-          this.parserError(this.peek(), "Can't have more than 255 arguments");
-        }
-        args.push(this.expression());
+      if (args.length >= 255) {
+        this.parserError(this.peek(), "Can't have more than 255 arguments");
+      }
+      args.push(this.equality());
+
+      while (this.check(TokenType.COMMA)) {
+        this.consume(
+          TokenType.COMMA,
+          "Arguments should be separated by commas",
+        );
+        args.push(this.equality());
       }
     }
 

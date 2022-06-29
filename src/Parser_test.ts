@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertNotEquals,
-} from "https://deno.land/std@0.137.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.137.0/testing/asserts.ts";
 import { printAST } from "./AstPrinter.ts";
 import {
   assertSpyCall,
@@ -9,7 +6,6 @@ import {
 } from "https://deno.land/std@0.137.0/testing/mock.ts";
 import Parser from "./Parser.ts";
 import { Scanner } from "./Scanner.ts";
-import { ExpressionStmt } from "./Stmt.ts";
 const { test } = Deno;
 
 const testParsing = (source: string) => {
@@ -129,6 +125,45 @@ testParsesToAST
             VariableExpression i
             LiteralExpression 1`;
 
+testParsesToAST`call(3);${"should support a function call"}ExpressionStatement
+  FunctionCall
+    callee:
+      VariableExpression call
+    arguments:
+      LiteralExpression 3`;
+
+testParsesToAST
+  `add(3, 4, 5);${"should support a function call"}ExpressionStatement
+  FunctionCall
+    callee:
+      VariableExpression add
+    arguments:
+      LiteralExpression 3
+      LiteralExpression 4
+      LiteralExpression 5`;
+
+test("should error on trailing comma in function args", () => {
+  const { parser, logStub } = testParsing("call(3, 4,);");
+  parser.parse();
+  assertSpyCall(logStub, 0, {
+    args: [
+      1,
+      "Expect expression.",
+    ],
+  });
+});
+
+test("it should error if you say 'var' with no identifier", () => {
+  const { parser, logStub } = testParsing("var = 3;");
+  parser.parse();
+  assertSpyCall(logStub, 0, {
+    args: [
+      1,
+      "Expect variable name.",
+    ],
+  });
+});
+
 //
 ["1 ? 2;", "1 ? 2 ? 3;", "1 ? true;"].forEach((badOne) => {
   test(`should give an error for malformed ternaries ${JSON.stringify(badOne)}`, () => {
@@ -180,16 +215,5 @@ testParsesToAST
         "looks like we've got a binary operator out front",
       ],
     });
-  });
-});
-
-test("it should error if you say 'var' with no identifier", () => {
-  const { parser, logStub } = testParsing("var = 3;");
-  parser.parse();
-  assertSpyCall(logStub, 0, {
-    args: [
-      1,
-      "Expect variable name.",
-    ],
   });
 });

@@ -95,7 +95,7 @@ export function createBinary(
 export interface Call {
   callee: Expr;
   paren: Token;
-  arguments: Expr[];
+  args: Expr[];
   nodeType: "Call";
 }
 
@@ -105,18 +105,18 @@ export interface Call {
  * Arguments:
  * @param callee Expr
  * @param paren Token
- * @param arguments Expr[]
+ * @param args Expr[]
  * @returns a Call node
  */
 export function createCall(
   callee: Expr,
   paren: Token,
-  arguments: Expr[],
+  args: Expr[],
 ): Call {
   const newCall: Call = {
     callee,
     paren,
-    arguments,
+    args,
     nodeType: "Call",
   };
   return newCall;

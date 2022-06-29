@@ -157,6 +157,18 @@ export function printAST(ast: AST, nesting = "") {
         printExpressionNode(expr.right, nesting + "  ");
         break;
       }
+      case "Call": {
+        lines.push(nesting + `FunctionCall`);
+        lines.push(nesting + `  callee:`);
+        printExpressionNode(expr.callee, nesting + "    ");
+        if (expr.args.length > 0) {
+          lines.push(nesting + "  arguments:");
+          expr.args.forEach((arg) => {
+            printExpressionNode(arg, nesting + "    ");
+          });
+        }
+        break;
+      }
       default:
         assertUnreachable(expr);
     }
