@@ -22,6 +22,7 @@ function main() {
     defineAst(outputDir, "Stmt", [
       "BlockStmt      | statements: Stmt[]",
       "ExpressionStmt | expression: Expr",
+      "FunctionStmt   | name: Token, params: Token[], body: Stmt[]",
       "IfStmt         | condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
       "PrintStmt      | expression: Expr",
       "VarStmt        | name: Token, initializer?: Expr",

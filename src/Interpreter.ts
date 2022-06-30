@@ -9,6 +9,7 @@ import {
   Unary,
   Variable,
 } from "./Expr.ts";
+import { GlobalEnvironment } from "./Global.ts";
 import { LiteralValue } from "./Literal.ts";
 import { isLoxCallable } from "./LoxCallable.ts";
 import { RuntimeError } from "./RuntimeError.ts";
@@ -39,7 +40,10 @@ export function interpret(
   error: ErrorFunc,
   environment?: Environment,
 ) {
-  const env = environment || new Environment();
+  // if there is no environment this call to `interpret` is the first one when
+  // dealing with a syntax tree, so we should just create a `GlobalEnvironment`
+  // if it's not present.
+  const env = environment || new GlobalEnvironment();
   try {
     statements.forEach((stmt) => execute(stmt, env));
   } catch (err) {
@@ -315,21 +319,23 @@ function interpretLogical(expr: Logical, environment: Environment) {
 function interpretCall(expr: Call, environment: Environment) {
   const callee = interpretExpression(expr.callee);
 
-  const evaluatedArgs = expr.args.map(argument => interpretExpression(argument, environment))
+  const evaluatedArgs = expr.args.map((argument) =>
+    interpretExpression(argument, environment)
+  );
 
   if (!isLoxCallable(callee)) {
-      throw new RuntimeError(
-        expr.paren,
-        "Can only call functions and classes."
-      );
+    throw new RuntimeError(
+      expr.paren,
+      "Can only call functions and classes.",
+    );
   }
 
   if (callee.arity() !== evaluatedArgs.length) {
     throw new RuntimeError(
       expr.paren,
-      `Expected ${callee.arity()} arguments but got ${evaluatedArgs.length}`
+      `Expected ${callee.arity()} arguments but got ${evaluatedArgs.length}`,
     );
   }
 
-  return callee.call(environment, evaluatedArgs)
+  return callee.call(environment, evaluatedArgs);
 }

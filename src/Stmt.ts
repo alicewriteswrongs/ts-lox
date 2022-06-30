@@ -45,6 +45,36 @@ export function createExpressionStmt(
   return newExpressionStmt;
 }
 
+export interface FunctionStmt {
+  name: Token;
+  params: Token[];
+  body: Stmt[];
+  nodeType: "FunctionStmt";
+}
+
+/**
+ * Factory function for creating a FunctionStmt record
+ *
+ * Arguments:
+ * @param name Token
+ * @param params Token[]
+ * @param body Stmt[]
+ * @returns a FunctionStmt node
+ */
+export function createFunctionStmt(
+  name: Token,
+  params: Token[],
+  body: Stmt[],
+): FunctionStmt {
+  const newFunctionStmt: FunctionStmt = {
+    name,
+    params,
+    body,
+    nodeType: "FunctionStmt",
+  };
+  return newFunctionStmt;
+}
+
 export interface IfStmt {
   condition: Expr;
   thenBranch: Stmt;
@@ -152,6 +182,7 @@ export function createWhileStmt(
 export type Stmt =
   | BlockStmt
   | ExpressionStmt
+  | FunctionStmt
   | IfStmt
   | PrintStmt
   | VarStmt
@@ -161,6 +192,7 @@ export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
   return [
     "BlockStmt",
     "ExpressionStmt",
+    "FunctionStmt",
     "IfStmt",
     "PrintStmt",
     "VarStmt",

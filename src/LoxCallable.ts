@@ -1,23 +1,21 @@
 import { Environment } from "./Environment.ts";
 import { Expr } from "./Expr.ts";
+import { FunctionStmt } from "./Stmt.ts";
 
 interface LoxCallable {
-  call: (environment: Environment, args: any[]) => void,
-    arity: () => number;
-
+  call: (environment: Environment, args: any[]) => void;
+  arity: () => number;
 }
 
-export const isLoxCallable = (obj: any): obj is LoxCallable => {
-  return true
-  // TODO implement
-}
-
-type NativeFunctionImpl<ReturnType> = (env: Environment, ...rest: Expr[]) => ReturnType;
+type NativeFunctionImpl<ReturnType> = (
+  env: Environment,
+  ...rest: Expr[]
+) => ReturnType;
 
 export class NativeFunction<ReturnType> implements LoxCallable {
   fn: NativeFunctionImpl<ReturnType>;
   constructor(nativeFunction: NativeFunctionImpl<ReturnType>) {
-    this.fn = nativeFunction
+    this.fn = nativeFunction;
   }
 
   call(environment: Environment, args: any[]) {
@@ -25,21 +23,34 @@ export class NativeFunction<ReturnType> implements LoxCallable {
   }
 
   arity() {
-    return this.fn.length
+    return this.fn.length;
   }
 
-  toString () {
-    return "<native fn>"
+  toString() {
+    return "<native fn>";
   }
 }
 
-// export class  {
-//   constructor() {
-//   }
+export class LoxFunction implements LoxCallable {
+  declaration: FunctionStmt;
 
-//   call(environment: Environment, args: Object[]) {
-//   }
+  constructor(declaration: FunctionStmt) {
+    this.declaration = declaration;
+  }
 
-//   arity() {
-//   }
-// }
+  // @ts-ignore
+  call(environment: Environment, args: any[], execute: any) {
+    // create a new environment for this function
+    const functionScope = new Environment(environment);
+
+    for (let i = 0; i < this.declaration.params.length; i++) {
+      functionScope.define(
+        this.declaration.params[i].lexeme,
+        args[i],
+      );
+    }
+
+    execute(this.declaration.body, environment);
+    return null;
+  }
+}

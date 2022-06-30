@@ -13,6 +13,7 @@ import {
 import {
   createBlockStmt,
   createExpressionStmt,
+  createFunctionStmt,
   createIfStmt,
   createPrintStmt,
   createVarStmt,
@@ -166,8 +167,12 @@ export default class Parser {
   // gammar here is _slightly_ different than the one in the book.
   //
   // program        → declaration* EOF ;
-  // declaration    → varDecl
+  // declaration    → funDecl
+  //                | varDecl
   //                | statement ;
+  // funDecl        → "fun" function ;
+  // function       → IDENTIFIER "(" parameters? ")" block ;
+  // parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
   // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
   //                | forStmt
@@ -206,6 +211,9 @@ export default class Parser {
    */
   declaration() {
     try {
+      if (this.match(TokenType.FUN)) {
+        return this.function("function");
+      }
       if (this.match(TokenType.VAR)) {
         return this.varDeclaration();
       }
@@ -387,6 +395,38 @@ export default class Parser {
     const expr = this.expression();
     this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
     return createExpressionStmt(expr);
+  }
+
+  /**
+   * function → IDENTIFIER "(" parameters? ")" block ;  *
+   */
+  function(kind: "function" | "method"): Stmt {
+    const name = this.consume(TokenType.IDENTIFIER, `Expect ${kind} name.`);
+    this.consume(TokenType.LEFT_PAREN, `Expect '(' after ${kind} name.`);
+    const parameters: Token[] = [];
+
+    while (!this.check(TokenType.RIGHT_PAREN)) {
+      if (parameters.length >= 255) {
+        this.parserError(this.peek(), "Can't have more than 255 parameters.");
+      }
+
+      parameters.push(
+        this.consume(TokenType.IDENTIFIER, "Expect parameter name."),
+      );
+      // consume a comma if it's present
+      this.match(TokenType.COMMA);
+    }
+    this.consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+    this.consume(TokenType.LEFT_BRACE, `Expect '{' before ${kind} body.`);
+
+    const body = this.block();
+
+    return createFunctionStmt(
+      name,
+      parameters,
+      body,
+    );
   }
 
   /**
