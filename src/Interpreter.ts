@@ -129,9 +129,9 @@ function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
 }
 
 function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
-  const func = new LoxFunction(stmt)
-  environment.define(stmt.name.lexeme, func)
-  return null
+  const func = new LoxFunction(stmt);
+  environment.define(stmt.name.lexeme, func);
+  return null;
 }
 
 export function stringify(value: any) {

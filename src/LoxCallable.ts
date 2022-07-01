@@ -59,20 +59,22 @@ export class LoxFunction implements LoxCallable {
   }
 
   arity() {
-    return this.declaration.params.length
+    return this.declaration.params.length;
   }
 
   toString() {
-    return `<fn ${this.declaration.name.lexeme}>`
+    return `<fn ${this.declaration.name.lexeme}>`;
   }
 }
 
-export function isLoxCallable(maybeCallable: any): maybeCallable is LoxCallable {
+export function isLoxCallable(
+  maybeCallable: any,
+): maybeCallable is LoxCallable {
   if (maybeCallable instanceof LoxFunction) {
-    return true
+    return true;
   }
   if (maybeCallable instanceof NativeFunction) {
-    return true
+    return true;
   }
-  return false
+  return false;
 }

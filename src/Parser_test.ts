@@ -142,6 +142,15 @@ testParsesToAST
       LiteralExpression 4
       LiteralExpression 5`;
 
+testParsesToAST`fun myfun(argOne) {
+    print argOne;
+  }${"should parse a simple function"}FunctionDeclaration
+  Parameters
+    argOne
+  Body
+    PrintStatement
+      VariableExpression argOne`;
+
 test("should error on trailing comma in function args", () => {
   const { parser, logStub } = testParsing("call(3, 4,);");
   parser.parse();
