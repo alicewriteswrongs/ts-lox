@@ -11,10 +11,11 @@ import {
 } from "./Expr.ts";
 import { GlobalEnvironment } from "./Global.ts";
 import { LiteralValue } from "./Literal.ts";
-import { isLoxCallable } from "./LoxCallable.ts";
+import { isLoxCallable, LoxFunction } from "./LoxCallable.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import {
   ExpressionStmt,
+  FunctionStmt,
   IfStmt,
   PrintStmt,
   Stmt,
@@ -73,6 +74,9 @@ function execute(statement: Stmt, environment: Environment) {
     case "WhileStmt":
       interpretWhileStmt(statement, environment);
       break;
+    case "FunctionStmt":
+      interpretFuncStmt(statement, environment);
+      break;
     default:
       assertUnreachable(statement);
   }
@@ -103,7 +107,7 @@ function interpretPrintStmt(
   console.log(stringify(value));
 }
 
-function interpretBlockStmt(statements: Stmt[], env: Environment) {
+export function interpretBlockStmt(statements: Stmt[], env: Environment) {
   for (const statement of statements) {
     execute(statement, env);
   }
@@ -122,6 +126,12 @@ function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
   while (isTruthy(interpretExpression(stmt.condition, environment))) {
     execute(stmt.body, environment);
   }
+}
+
+function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
+  const func = new LoxFunction(stmt)
+  environment.define(stmt.name.lexeme, func)
+  return null
 }
 
 export function stringify(value: any) {
@@ -317,7 +327,7 @@ function interpretLogical(expr: Logical, environment: Environment) {
 }
 
 function interpretCall(expr: Call, environment: Environment) {
-  const callee = interpretExpression(expr.callee);
+  const callee = interpretExpression(expr.callee, environment);
 
   const evaluatedArgs = expr.args.map((argument) =>
     interpretExpression(argument, environment)

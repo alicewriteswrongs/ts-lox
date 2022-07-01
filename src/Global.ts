@@ -9,7 +9,9 @@ export class GlobalEnvironment extends Environment {
     this.define(
       "clock",
       new NativeFunction(
-        (_env: Environment) => Date.now(),
+        (_env: Environment) => {
+          console.log( Date.now());
+        }
       ),
     );
   }

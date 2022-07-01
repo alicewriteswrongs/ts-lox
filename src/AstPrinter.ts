@@ -99,6 +99,20 @@ export function printAST(ast: AST, nesting = "") {
         printStatementNode(body, "    ");
         break;
       }
+      case "FunctionStmt": {
+        const { body, name, params } = stmt
+
+        lines.push(nesting + "FunctionDeclaration")
+        lines.push(nesting + "  Parameters")
+        params.forEach((token) =>
+          lines.push(nesting + "    " + token.lexeme)
+        );
+        lines.push(nesting + "  Body")
+        body.forEach((statement) =>
+          printStatementNode(statement, nesting + "    ")
+        );
+        break;
+      }
       default:
         assertUnreachable(stmt);
     }

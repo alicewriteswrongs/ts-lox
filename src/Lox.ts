@@ -1,6 +1,7 @@
 #!/usr/bin/env -S deno run --allow-read
 import { printAST } from "./AstPrinter.ts";
 import { Environment } from "./Environment.ts";
+import { GlobalEnvironment } from "./Global.ts";
 import { interpret, interpretExpression, stringify } from "./Interpreter.ts";
 import Parser from "./Parser.ts";
 import { Scanner } from "./Scanner.ts";
@@ -34,7 +35,7 @@ export class Lox {
   }
 
   runPrompt() {
-    const replRootEnvironment = new Environment();
+    const replRootEnvironment = new GlobalEnvironment();
     while (true) {
       const input = prompt(">");
       this.repl(input ?? "", replRootEnvironment);

@@ -1,5 +1,6 @@
 import { Environment } from "./Environment.ts";
 import { Expr } from "./Expr.ts";
+import { interpretBlockStmt } from "./Interpreter.ts";
 import { FunctionStmt } from "./Stmt.ts";
 
 interface LoxCallable {
@@ -14,6 +15,7 @@ type NativeFunctionImpl<ReturnType> = (
 
 export class NativeFunction<ReturnType> implements LoxCallable {
   fn: NativeFunctionImpl<ReturnType>;
+
   constructor(nativeFunction: NativeFunctionImpl<ReturnType>) {
     this.fn = nativeFunction;
   }
@@ -23,7 +25,10 @@ export class NativeFunction<ReturnType> implements LoxCallable {
   }
 
   arity() {
-    return this.fn.length;
+    // we pass environment to the native function impl
+    // but the lox interpreter only needs to be concerned
+    // with the length of the 'lox args'
+    return this.fn.length - 1;
   }
 
   toString() {
@@ -38,8 +43,7 @@ export class LoxFunction implements LoxCallable {
     this.declaration = declaration;
   }
 
-  // @ts-ignore
-  call(environment: Environment, args: any[], execute: any) {
+  call(environment: Environment, args: any[]) {
     // create a new environment for this function
     const functionScope = new Environment(environment);
 
@@ -50,7 +54,25 @@ export class LoxFunction implements LoxCallable {
       );
     }
 
-    execute(this.declaration.body, environment);
+    interpretBlockStmt(this.declaration.body, functionScope);
     return null;
   }
+
+  arity() {
+    return this.declaration.params.length
+  }
+
+  toString() {
+    return `<fn ${this.declaration.name.lexeme}>`
+  }
+}
+
+export function isLoxCallable(maybeCallable: any): maybeCallable is LoxCallable {
+  if (maybeCallable instanceof LoxFunction) {
+    return true
+  }
+  if (maybeCallable instanceof NativeFunction) {
+    return true
+  }
+  return false
 }
