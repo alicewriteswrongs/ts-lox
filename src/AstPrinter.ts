@@ -102,13 +102,24 @@ export function printAST(ast: AST, nesting = "") {
       case "FunctionStmt": {
         const { body, name, params } = stmt;
 
-        lines.push(nesting + "FunctionDeclaration");
+        lines.push(nesting + "FunctionDeclaration " + name.lexeme);
         lines.push(nesting + "  Parameters");
         params.forEach((token) => lines.push(nesting + "    " + token.lexeme));
         lines.push(nesting + "  Body");
         body.forEach((statement) =>
           printStatementNode(statement, nesting + "    ")
         );
+        break;
+      }
+      case "ReturnStmt": {
+        const { value } = stmt;
+
+        if (value === null) {
+          lines.push(nesting + "ReturnStatement <void>");
+        } else {
+          lines.push(nesting + "ReturnStatement");
+          printExpressionNode(value, nesting + "  ");
+        }
         break;
       }
       default:

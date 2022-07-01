@@ -1,5 +1,5 @@
 import { Expr } from "./Expr.ts";
-import { Token } from "./Token.ts";
+import { Token } from "./Token.ts";;
 
 export interface BlockStmt {
   statements: Stmt[];
@@ -129,7 +129,7 @@ export function createPrintStmt(
 
 export interface ReturnStmt {
   keyword: Token;
-  expr: Value;
+  value: Expr | null;
   nodeType: "ReturnStmt";
 }
 
@@ -138,16 +138,16 @@ export interface ReturnStmt {
  *
  * Arguments:
  * @param keyword Token
- * @param expr Value
+ * @param value Expr | null
  * @returns a ReturnStmt node
  */
 export function createReturnStmt(
   keyword: Token,
-  expr: Value,
+  value: Expr | null,
 ): ReturnStmt {
   const newReturnStmt: ReturnStmt = {
     keyword,
-    expr,
+    value,
     nodeType: "ReturnStmt",
   };
   return newReturnStmt;

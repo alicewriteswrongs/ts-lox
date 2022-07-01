@@ -8,26 +8,26 @@ function main() {
     const outputDir = args[0];
 
     defineAst(outputDir, "Expr", [
-      "Assign   | name: Token, value: Expr",
-      "Ternary  | condition: Expr, token: Token, whenTrue: Expr, whenFalse: Expr",
-      "Binary   | left: Expr, operator: Token, right: Expr",
-      "Call     | callee: Expr, paren: Token, args: Expr[]",
-      "Grouping | expression: Expr",
-      "Literal  | value: LiteralValue",
-      "Logical  | left: Expr, operator: Token, right: Expr",
-      "Unary    | operator: Token, right: Expr",
-      "Variable | name: Token",
+      "Assign   -> name: Token, value: Expr",
+      "Ternary  -> condition: Expr, token: Token, whenTrue: Expr, whenFalse: Expr",
+      "Binary   -> left: Expr, operator: Token, right: Expr",
+      "Call     -> callee: Expr, paren: Token, args: Expr[]",
+      "Grouping -> expression: Expr",
+      "Literal  -> value: LiteralValue",
+      "Logical  -> left: Expr, operator: Token, right: Expr",
+      "Unary    -> operator: Token, right: Expr",
+      "Variable -> name: Token",
     ]);
 
     defineAst(outputDir, "Stmt", [
-      "BlockStmt      | statements: Stmt[]",
-      "ExpressionStmt | expression: Expr",
-      "FunctionStmt   | name: Token, params: Token[], body: Stmt[]",
-      "IfStmt         | condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
-      "PrintStmt      | expression: Expr",
-      "ReturnStmt     | keyword: Token, expr: Value",
-      "VarStmt        | name: Token, initializer?: Expr",
-      "WhileStmt      | condition: Expr, body: Stmt",
+      "BlockStmt      -> statements: Stmt[]",
+      "ExpressionStmt -> expression: Expr",
+      "FunctionStmt   -> name: Token, params: Token[], body: Stmt[]",
+      "IfStmt         -> condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
+      "PrintStmt      -> expression: Expr",
+      "ReturnStmt     -> keyword: Token, value: Expr | null",
+      "VarStmt        -> name: Token, initializer?: Expr",
+      "WhileStmt      -> condition: Expr, body: Stmt",
     ]);
   }
 }
@@ -47,7 +47,7 @@ function defineAst(
 
   const typeNameToFields = types.map((typeString) =>
     typeString
-      .split("|")
+      .split("->")
       .map((str) => str.trim())
   );
 
@@ -62,7 +62,7 @@ function defineAst(
   // add union type for all these things
   lines.push(`export type ${baseName} =`);
   types.forEach((typeString) => {
-    const [typeName] = typeString.split("|").map((str) => str.trim());
+    const [typeName] = typeString.split("->").map((str) => str.trim());
     lines.push(`| ${typeName}`);
   });
   lines.push("");

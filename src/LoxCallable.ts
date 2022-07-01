@@ -1,10 +1,11 @@
 import { Environment } from "./Environment.ts";
 import { Expr } from "./Expr.ts";
 import { interpretBlockStmt } from "./Interpreter.ts";
+import { Return } from "./Return.ts";
 import { FunctionStmt } from "./Stmt.ts";
 
 interface LoxCallable {
-  call: (environment: Environment, args: any[]) => void;
+  call: (environment: Environment, args: any[]) => null;
   arity: () => number;
 }
 
@@ -54,7 +55,17 @@ export class LoxFunction implements LoxCallable {
       );
     }
 
-    interpretBlockStmt(this.declaration.body, functionScope);
+    try {
+      interpretBlockStmt(this.declaration.body, functionScope);
+    } catch (err) {
+      if (err instanceof Return) {
+        // there was a return in the function, so we should grab the value and return it
+        return err.value
+      } else {
+        // something else happened, rethrow
+        throw err
+      }
+    }
     return null;
   }
 

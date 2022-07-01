@@ -12,12 +12,14 @@ import {
 import { GlobalEnvironment } from "./Global.ts";
 import { LiteralValue } from "./Literal.ts";
 import { isLoxCallable, LoxFunction } from "./LoxCallable.ts";
+import { Return } from "./Return.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import {
   ExpressionStmt,
   FunctionStmt,
   IfStmt,
   PrintStmt,
+  ReturnStmt,
   Stmt,
   VarStmt,
   WhileStmt,
@@ -77,6 +79,9 @@ function execute(statement: Stmt, environment: Environment) {
     case "FunctionStmt":
       interpretFuncStmt(statement, environment);
       break;
+    case "ReturnStmt":
+      interpretReturnStatement(statement, environment);
+      break;
     default:
       assertUnreachable(statement);
   }
@@ -132,6 +137,15 @@ function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
   const func = new LoxFunction(stmt);
   environment.define(stmt.name.lexeme, func);
   return null;
+}
+
+function interpretReturnStatement(stmt: ReturnStmt, environment: Environment) {
+  let value = null
+  if (stmt.value !== null) {
+    value = interpretExpression(stmt.value, environment);
+
+    throw new Return(value)
+  }
 }
 
 export function stringify(value: any) {

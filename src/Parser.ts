@@ -16,6 +16,7 @@ import {
   createFunctionStmt,
   createIfStmt,
   createPrintStmt,
+  createReturnStmt,
   createVarStmt,
   createWhileStmt,
 } from "./Stmt.ts";
@@ -229,6 +230,7 @@ export default class Parser {
    * statement → exprStmt
    *           | ifStmt
    *           | printStmt
+   *           | returnStmt
    *           | whileStmt
    *           | block ;
    */
@@ -244,6 +246,9 @@ export default class Parser {
     }
     if (this.match(TokenType.LEFT_BRACE)) {
       return createBlockStmt(this.block());
+    }
+    if (this.match(TokenType.RETURN)) {
+      return this.returnStatement();
     }
     if (this.match(TokenType.WHILE)) {
       return this.whileStatement();
@@ -388,6 +393,21 @@ export default class Parser {
 
     this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
     return createPrintStmt(expr);
+  }
+
+  /**
+   * returnStmt → "return" expression? ";" ;
+   */
+  returnStatement(): Stmt {
+    const keyword = this.previous();
+
+    let value = null;
+    if (!this.check(TokenType.SEMICOLON)) {
+      value = this.expression();
+    }
+
+    this.consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+    return createReturnStmt(keyword, value);
   }
 
   /**
