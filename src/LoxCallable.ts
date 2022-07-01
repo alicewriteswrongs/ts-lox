@@ -39,14 +39,16 @@ export class NativeFunction<ReturnType> implements LoxCallable {
 
 export class LoxFunction implements LoxCallable {
   declaration: FunctionStmt;
+  closure: Environment;
 
-  constructor(declaration: FunctionStmt) {
+  constructor(declaration: FunctionStmt, closure: Environment) {
     this.declaration = declaration;
+    this.closure = closure;
   }
 
-  call(environment: Environment, args: any[]) {
+  call(_environment: Environment, args: any[]) {
     // create a new environment for this function
-    const functionScope = new Environment(environment);
+    const functionScope = new Environment(this.closure);
 
     for (let i = 0; i < this.declaration.params.length; i++) {
       functionScope.define(
