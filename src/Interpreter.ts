@@ -140,11 +140,11 @@ function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
 }
 
 function interpretReturnStatement(stmt: ReturnStmt, environment: Environment) {
-  let value = null
+  let value = null;
   if (stmt.value !== null) {
     value = interpretExpression(stmt.value, environment);
 
-    throw new Return(value)
+    throw new Return(value);
   }
 }
 

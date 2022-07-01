@@ -1,5 +1,5 @@
 import { Expr } from "./Expr.ts";
-import { Token } from "./Token.ts";;
+import { Token } from "./Token.ts";
 
 export interface BlockStmt {
   statements: Stmt[];

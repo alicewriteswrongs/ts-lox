@@ -62,10 +62,10 @@ export class LoxFunction implements LoxCallable {
     } catch (err) {
       if (err instanceof Return) {
         // there was a return in the function, so we should grab the value and return it
-        return err.value
+        return err.value;
       } else {
         // something else happened, rethrow
-        throw err
+        throw err;
       }
     }
     return null;
