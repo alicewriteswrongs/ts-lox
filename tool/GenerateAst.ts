@@ -25,6 +25,7 @@ function main() {
       "FunctionStmt   | name: Token, params: Token[], body: Stmt[]",
       "IfStmt         | condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
       "PrintStmt      | expression: Expr",
+      "ReturnStmt     | keyword: Token, expr: Value",
       "VarStmt        | name: Token, initializer?: Expr",
       "WhileStmt      | condition: Expr, body: Stmt",
     ]);

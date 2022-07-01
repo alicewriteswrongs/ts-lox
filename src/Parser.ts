@@ -178,6 +178,7 @@ export default class Parser {
   //                | forStmt
   //                | ifStmt
   //                | printStmt
+  //                | returnStmt
   //                | whileStmt
   //                | block ;
   // exprStmt       → expression ";" ;
@@ -186,6 +187,7 @@ export default class Parser {
   //                  expression? ")" statement ;
   // ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
   // printStmt      → "print" expression ";" ;
+  // returnStmt     → "return" expression? ";" ;
   // whileStmt      → "while" "(" expression ")" statement ;
   // block          → "{" declaration "}" ;
   // expression     → assignment ("," assignment)* ;

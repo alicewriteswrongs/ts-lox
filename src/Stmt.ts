@@ -127,6 +127,32 @@ export function createPrintStmt(
   return newPrintStmt;
 }
 
+export interface ReturnStmt {
+  keyword: Token;
+  expr: Value;
+  nodeType: "ReturnStmt";
+}
+
+/**
+ * Factory function for creating a ReturnStmt record
+ *
+ * Arguments:
+ * @param keyword Token
+ * @param expr Value
+ * @returns a ReturnStmt node
+ */
+export function createReturnStmt(
+  keyword: Token,
+  expr: Value,
+): ReturnStmt {
+  const newReturnStmt: ReturnStmt = {
+    keyword,
+    expr,
+    nodeType: "ReturnStmt",
+  };
+  return newReturnStmt;
+}
+
 export interface VarStmt {
   name: Token;
   initializer?: Expr;
@@ -185,6 +211,7 @@ export type Stmt =
   | FunctionStmt
   | IfStmt
   | PrintStmt
+  | ReturnStmt
   | VarStmt
   | WhileStmt;
 
@@ -195,6 +222,7 @@ export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
     "FunctionStmt",
     "IfStmt",
     "PrintStmt",
+    "ReturnStmt",
     "VarStmt",
     "WhileStmt",
   ].includes(ASTNode.nodeType);
