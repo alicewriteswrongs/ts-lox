@@ -4,6 +4,7 @@ import {
   Binary,
   Call,
   Expr,
+  FunctionExpr,
   Logical,
   Ternary,
   Unary,
@@ -134,7 +135,7 @@ function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
 }
 
 function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
-  const func = new LoxFunction(stmt, environment);
+  const func = new LoxFunction(stmt.func, environment, stmt.name);
   environment.define(stmt.name.lexeme, func);
   return null;
 }
@@ -168,7 +169,7 @@ export function stringify(value: any) {
 export function interpretExpression(
   expr: Expr,
   env: Environment,
-): LiteralValue {
+): LiteralValue | LoxFunction {
   switch (expr.nodeType) {
     case "Assign":
       return interpretAssignExpression(expr, env);
@@ -188,6 +189,8 @@ export function interpretExpression(
       return interpretLogical(expr, env);
     case "Call":
       return interpretCall(expr, env);
+    case "FunctionExpr":
+      return interpretFuncExpr(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -216,7 +219,7 @@ function interpretUnary(expr: Unary, environment: Environment) {
  * simple definition of truthiness: if it's null or `false` then it's _not_ truthy,
  * else it is (so "", [], 0, 1, 2, 3, etc are all truthy)
  */
-function isTruthy(value: LiteralValue): boolean {
+function isTruthy(value: LiteralValue | LoxFunction): boolean {
   if (value === null) {
     return false;
   }
@@ -275,7 +278,7 @@ function interpretBinary(expr: Binary, environment: Environment): LiteralValue {
   throw new Error();
 }
 
-function isEqual(a: LiteralValue, b: LiteralValue) {
+function isEqual(a: LiteralValue | LoxFunction, b: LiteralValue | LoxFunction) {
   if (a === null && b === null) {
     return true;
   }
@@ -362,4 +365,8 @@ function interpretCall(expr: Call, environment: Environment) {
   }
 
   return callee.call(environment, evaluatedArgs);
+}
+
+function interpretFuncExpr(expr: FunctionExpr, environment: Environment) {
+  return new LoxFunction(expr, environment);
 }

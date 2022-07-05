@@ -100,7 +100,8 @@ export function printAST(ast: AST, nesting = "") {
         break;
       }
       case "FunctionStmt": {
-        const { body, name, params } = stmt;
+        const { name } = stmt;
+        const { body, params } = stmt.func;
 
         lines.push(nesting + "FunctionDeclaration " + name.lexeme);
         lines.push(nesting + "  Parameters");
@@ -190,6 +191,18 @@ export function printAST(ast: AST, nesting = "") {
             printExpressionNode(arg, nesting + "    ");
           });
         }
+        break;
+      }
+      case "FunctionExpr": {
+        const { body, params } = expr;
+
+        lines.push(nesting + "FunctionExpression");
+        lines.push(nesting + "  Parameters");
+        params.forEach((token) => lines.push(nesting + "    " + token.lexeme));
+        lines.push(nesting + "  Body");
+        body.forEach((statement) =>
+          printStatementNode(statement, nesting + "    ")
+        );
         break;
       }
       default:

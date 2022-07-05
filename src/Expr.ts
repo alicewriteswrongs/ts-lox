@@ -1,6 +1,5 @@
 import { Token } from "./Token.ts";
 import { LiteralValue } from "./Literal.ts";
-import { Stmt } from "./Stmt.ts";
 
 export interface Assign {
   name: Token;
@@ -244,6 +243,32 @@ export function createVariable(
   return newVariable;
 }
 
+export interface FunctionExpr {
+  params: Token[];
+  body: Stmt[];
+  nodeType: "FunctionExpr";
+}
+
+/**
+ * Factory function for creating a FunctionExpr record
+ *
+ * Arguments:
+ * @param params Token[]
+ * @param body Stmt[]
+ * @returns a FunctionExpr node
+ */
+export function createFunctionExpr(
+  params: Token[],
+  body: Stmt[],
+): FunctionExpr {
+  const newFunctionExpr: FunctionExpr = {
+    params,
+    body,
+    nodeType: "FunctionExpr",
+  };
+  return newFunctionExpr;
+}
+
 export type Expr =
   | Assign
   | Ternary
@@ -253,7 +278,8 @@ export type Expr =
   | Literal
   | Logical
   | Unary
-  | Variable;
+  | Variable
+  | FunctionExpr;
 
 export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
   return [
@@ -266,5 +292,6 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Logical",
     "Unary",
     "Variable",
+    "FunctionExpr",
   ].includes(ASTNode.nodeType);
 }

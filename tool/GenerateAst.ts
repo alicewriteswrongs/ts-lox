@@ -8,21 +8,22 @@ function main() {
     const outputDir = args[0];
 
     defineAst(outputDir, "Expr", [
-      "Assign   -> name: Token, value: Expr",
-      "Ternary  -> condition: Expr, token: Token, whenTrue: Expr, whenFalse: Expr",
-      "Binary   -> left: Expr, operator: Token, right: Expr",
-      "Call     -> callee: Expr, paren: Token, args: Expr[]",
-      "Grouping -> expression: Expr",
-      "Literal  -> value: LiteralValue",
-      "Logical  -> left: Expr, operator: Token, right: Expr",
-      "Unary    -> operator: Token, right: Expr",
-      "Variable -> name: Token",
+      "Assign       -> name: Token, value: Expr",
+      "Ternary      -> condition: Expr, token: Token, whenTrue: Expr, whenFalse: Expr",
+      "Binary       -> left: Expr, operator: Token, right: Expr",
+      "Call         -> callee: Expr, paren: Token, args: Expr[]",
+      "Grouping     -> expression: Expr",
+      "Literal      -> value: LiteralValue",
+      "Logical      -> left: Expr, operator: Token, right: Expr",
+      "Unary        -> operator: Token, right: Expr",
+      "Variable     -> name: Token",
+      "FunctionExpr -> params: Token[], body: Stmt[]",
     ]);
 
     defineAst(outputDir, "Stmt", [
       "BlockStmt      -> statements: Stmt[]",
       "ExpressionStmt -> expression: Expr",
-      "FunctionStmt   -> name: Token, params: Token[], body: Stmt[]",
+      "FunctionStmt   -> name: Token, func: FunctionExpr",
       "IfStmt         -> condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
       "PrintStmt      -> expression: Expr",
       "ReturnStmt     -> keyword: Token, value: Expr | null",

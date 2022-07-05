@@ -1,5 +1,5 @@
-import { Expr } from "./Expr.ts";
 import { Token } from "./Token.ts";
+import { LiteralValue } from "./Literal.ts";
 
 export interface BlockStmt {
   statements: Stmt[];
@@ -47,8 +47,7 @@ export function createExpressionStmt(
 
 export interface FunctionStmt {
   name: Token;
-  params: Token[];
-  body: Stmt[];
+  func: FunctionExpr;
   nodeType: "FunctionStmt";
 }
 
@@ -57,19 +56,16 @@ export interface FunctionStmt {
  *
  * Arguments:
  * @param name Token
- * @param params Token[]
- * @param body Stmt[]
+ * @param func FunctionExpr
  * @returns a FunctionStmt node
  */
 export function createFunctionStmt(
   name: Token,
-  params: Token[],
-  body: Stmt[],
+  func: FunctionExpr,
 ): FunctionStmt {
   const newFunctionStmt: FunctionStmt = {
     name,
-    params,
-    body,
+    func,
     nodeType: "FunctionStmt",
   };
   return newFunctionStmt;

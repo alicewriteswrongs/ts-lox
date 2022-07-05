@@ -2,6 +2,7 @@ import {
   createAssign,
   createBinary,
   createCall,
+  createFunctionExpr,
   createGrouping,
   createLiteral,
   createLogical,
@@ -9,6 +10,7 @@ import {
   createUnary,
   createVariable,
   Expr,
+  FunctionExpr,
 } from "./Expr.ts";
 import {
   createBlockStmt,
@@ -65,6 +67,16 @@ export default class Parser {
       return false;
     }
     return this.peek().type === type;
+  }
+
+  /**
+   * Check the next one!
+   */
+  checkNext(type: TokenType): boolean {
+    if (this.isAtEnd()) {
+      return false;
+    }
+    return this.#tokens[this.#current + 1].type === type;
   }
 
   /**
@@ -171,8 +183,8 @@ export default class Parser {
   // declaration    → funDecl
   //                | varDecl
   //                | statement ;
-  // funDecl        → "fun" function ;
-  // function       → IDENTIFIER "(" parameters? ")" block ;
+  // funDecl        → function ;
+  // function       → fun IDENTIFIER? "(" parameters? ")" block ;
   // parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
   // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
@@ -205,6 +217,7 @@ export default class Parser {
   // call           → primary ( "(" arguments? ")" )* ;
   // primary        → NUMBER | STRING | "true" | "false" | "nil"
   //                | "(" expression ")"
+  //                | function ;
   // arguments      → expression ( "," expression )* ;
   //                | IDENTIFIER ;
 
@@ -214,7 +227,7 @@ export default class Parser {
    */
   declaration() {
     try {
-      if (this.match(TokenType.FUN)) {
+      if (this.match(TokenType.FUN) && this.checkNext(TokenType.IDENTIFIER)) {
         return this.function("function");
       }
       if (this.match(TokenType.VAR)) {
@@ -424,7 +437,12 @@ export default class Parser {
    */
   function(kind: "function" | "method"): Stmt {
     const name = this.consume(TokenType.IDENTIFIER, `Expect ${kind} name.`);
-    this.consume(TokenType.LEFT_PAREN, `Expect '(' after ${kind} name.`);
+
+    return createFunctionStmt(name, this.functionBody(kind));
+  }
+
+  functionBody(kind: "function" | "method"): FunctionExpr {
+    this.consume(TokenType.LEFT_PAREN, `Expect '(' after ${kind} keyword.`);
     const parameters: Token[] = [];
 
     while (!this.check(TokenType.RIGHT_PAREN)) {
@@ -444,8 +462,7 @@ export default class Parser {
 
     const body = this.block();
 
-    return createFunctionStmt(
-      name,
+    return createFunctionExpr(
       parameters,
       body,
     );
@@ -720,6 +737,11 @@ export default class Parser {
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
       return createGrouping(expr);
     }
+
+    if (this.match(TokenType.FUN)) {
+      return this.functionBody("function");
+    }
+
     throw this.parserError(this.peek(), "Expect expression.");
   }
 }

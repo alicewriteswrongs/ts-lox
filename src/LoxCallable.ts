@@ -1,8 +1,8 @@
 import { Environment } from "./Environment.ts";
-import { Expr } from "./Expr.ts";
+import { Expr, FunctionExpr } from "./Expr.ts";
 import { interpretBlockStmt } from "./Interpreter.ts";
 import { Return } from "./Return.ts";
-import { FunctionStmt } from "./Stmt.ts";
+import { Token } from "./Token.ts";
 
 interface LoxCallable {
   call: (environment: Environment, args: any[]) => null;
@@ -21,7 +21,7 @@ export class NativeFunction<ReturnType> implements LoxCallable {
     this.fn = nativeFunction;
   }
 
-  call(environment: Environment, args: any[]) {
+  call(environment: Environment, args: any[]): any {
     this.fn(environment, ...args);
   }
 
@@ -38,10 +38,14 @@ export class NativeFunction<ReturnType> implements LoxCallable {
 }
 
 export class LoxFunction implements LoxCallable {
-  declaration: FunctionStmt;
+  name?: Token;
+  declaration: FunctionExpr;
   closure: Environment;
 
-  constructor(declaration: FunctionStmt, closure: Environment) {
+  constructor(declaration: FunctionExpr, closure: Environment, name?: Token) {
+    if (name) {
+      this.name = name;
+    }
     this.declaration = declaration;
     this.closure = closure;
   }
