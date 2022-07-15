@@ -1,5 +1,5 @@
+import { Expr, FunctionExpr } from "./Expr.ts";
 import { Token } from "./Token.ts";
-import { LiteralValue } from "./Literal.ts";
 
 export interface BlockStmt {
   statements: Stmt[];

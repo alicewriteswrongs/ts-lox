@@ -144,7 +144,7 @@ testParsesToAST
 
 testParsesToAST`fun myfun(argOne) {
     print argOne;
-  }${"should parse a simple function"}FunctionDeclaration
+  }${"should parse a simple function"}FunctionDeclaration myfun
   Parameters
     argOne
   Body

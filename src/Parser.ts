@@ -70,16 +70,6 @@ export default class Parser {
   }
 
   /**
-   * Check the next one!
-   */
-  checkNext(type: TokenType): boolean {
-    if (this.isAtEnd()) {
-      return false;
-    }
-    return this.#tokens[this.#current + 1].type === type;
-  }
-
-  /**
    * Are we at the end of the current file?
    */
   isAtEnd(): boolean {
@@ -227,7 +217,7 @@ export default class Parser {
    */
   declaration() {
     try {
-      if (this.match(TokenType.FUN) && this.checkNext(TokenType.IDENTIFIER)) {
+      if (this.match(TokenType.FUN) && this.check(TokenType.IDENTIFIER)) {
         return this.function("function");
       }
       if (this.match(TokenType.VAR)) {
