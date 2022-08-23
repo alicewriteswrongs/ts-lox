@@ -35,10 +35,10 @@ export class Lox {
   }
 
   runPrompt() {
-    const replRootEnvironment = new GlobalEnvironment();
+    let environment = new GlobalEnvironment();
     while (true) {
       const input = prompt(">");
-      this.repl(input ?? "", replRootEnvironment);
+      environment = this.repl(input ?? "", environment);
       this.hadError = false;
     }
   }
@@ -67,21 +67,22 @@ export class Lox {
   repl(source: string, environment: Environment) {
     const statements = this.parseSource(source);
 
+    console.log(printAST(statements ?? []));
+
     if (statements[0] && statements[0].nodeType === "ExpressionStmt") {
       const { expression } = statements[0];
       // this is a bit of a hack, but enables the normal behavior you'd
       // expect in a REPL where typing in the name of a variable will just
       // print it out for you.
       console.log(stringify(interpretExpression(expression, environment)));
+      return environment;
     } else {
-      interpret(
+      return interpret(
         statements,
         (line: number, message: string) => this.error(line, message),
         environment,
       );
     }
-
-    console.log(printAST(statements ?? []));
   }
 
   run(source: string) {

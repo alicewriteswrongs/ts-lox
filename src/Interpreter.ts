@@ -43,46 +43,49 @@ export function interpret(
   statements: Stmt[],
   error: ErrorFunc,
   environment?: Environment,
-) {
+): Environment {
   // if there is no environment this call to `interpret` is the first one when
   // dealing with a syntax tree, so we should just create a `GlobalEnvironment`
   // if it's not present.
   const env = environment || new GlobalEnvironment();
   try {
-    statements.forEach((stmt) => execute(stmt, env));
+    return statements.reduce(execute, env);
   } catch (err) {
     if (err instanceof RuntimeError) {
       error(err.token.line, err.message);
     }
+    return env;
   }
 }
 
-function execute(statement: Stmt, environment: Environment) {
+function execute(environment: Environment, statement: Stmt): Environment {
   switch (statement.nodeType) {
-    case "VarStmt":
-      interpretVarStmt(statement, environment);
-      break;
+    case "VarStmt": {
+      const varEnv = new Environment(environment);
+      interpretVarStmt(statement, varEnv);
+      return varEnv;
+    }
     case "ExpressionStmt":
       interpretExpressionStmt(statement, environment);
-      break;
+      return environment;
     case "PrintStmt":
       interpretPrintStmt(statement, environment);
-      break;
+      return environment;
     case "BlockStmt":
       interpretBlockStmt(statement.statements, new Environment(environment));
-      break;
+      return environment;
     case "IfStmt":
       interpretIfStmt(statement, environment);
-      break;
+      return environment;
     case "WhileStmt":
       interpretWhileStmt(statement, environment);
-      break;
+      return environment;
     case "FunctionStmt":
       interpretFuncStmt(statement, environment);
-      break;
+      return environment;
     case "ReturnStmt":
       interpretReturnStatement(statement, environment);
-      break;
+      return environment;
     default:
       assertUnreachable(statement);
   }
@@ -114,23 +117,21 @@ function interpretPrintStmt(
 }
 
 export function interpretBlockStmt(statements: Stmt[], env: Environment) {
-  for (const statement of statements) {
-    execute(statement, env);
-  }
+  statements.reduce(execute, env);
 }
 
 function interpretIfStmt(stmt: IfStmt, environment: Environment) {
   if (isTruthy(interpretExpression(stmt.condition, environment))) {
-    execute(stmt.thenBranch, environment);
+    execute(environment, stmt.thenBranch);
   } else if (stmt.elseBranch !== undefined) {
-    execute(stmt.elseBranch, environment);
+    execute(environment, stmt.elseBranch);
   }
   return null;
 }
 
 function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
   while (isTruthy(interpretExpression(stmt.condition, environment))) {
-    execute(stmt.body, environment);
+    execute(environment, stmt.body);
   }
 }
 
