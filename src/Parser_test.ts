@@ -40,8 +40,7 @@ testParsesToAST`1 + 2;${"should parse a binary expression"}ExpressionStatement
     LiteralExpression 1
     LiteralExpression 2`;
 
-testParsesToAST
-  `var mynum = 3;${"should parse a variable statement"}VariableStatement mynum
+testParsesToAST`var mynum = 3;${"should parse a variable statement"}VariableStatement mynum
   LiteralExpression 3`;
 
 testParsesToAST`-1;${"should parse a negation"}ExpressionStatement
@@ -54,8 +53,7 @@ testParsesToAST`1 ? 2 : 3;${"should parse a simple ternary"}ExpressionStatement
     LiteralExpression 2
     LiteralExpression 3`;
 
-testParsesToAST
-  `1 ? 4 ? 5 : 6 : 3;${"should parse nested ternaries correctly"}ExpressionStatement
+testParsesToAST`1 ? 4 ? 5 : 6 : 3;${"should parse nested ternaries correctly"}ExpressionStatement
   TernaryExpression
     LiteralExpression 1
     TernaryExpression
@@ -92,22 +90,19 @@ IfStatement
       PrintStatement
         LiteralExpression "they don't :("`;
 
-testParsesToAST
-  `true and false;${"should support 'and' keyword"}ExpressionStatement
+testParsesToAST`true and false;${"should support 'and' keyword"}ExpressionStatement
   LogicalExpression And
     LiteralExpression true
     LiteralExpression false`;
 
-testParsesToAST
-  `while (true) print "foo";${"should support a simple 'while'"}WhileStatement
+testParsesToAST`while (true) print "foo";${"should support a simple 'while'"}WhileStatement
   Condition
     LiteralExpression true
   Body
     PrintStatement
       LiteralExpression "foo"`;
 
-testParsesToAST
-  `for (var i = 0; i < 10; i = i + 1) print i;${"a for loop should desugar to a while loop"}BlockStatement
+testParsesToAST`for (var i = 0; i < 10; i = i + 1) print i;${"a for loop should desugar to a while loop"}BlockStatement
   VariableStatement i
     LiteralExpression 0
   WhileStatement
@@ -132,8 +127,7 @@ testParsesToAST`call(3);${"should support a function call"}ExpressionStatement
     arguments:
       LiteralExpression 3`;
 
-testParsesToAST
-  `add(3, 4, 5);${"should support a function call"}ExpressionStatement
+testParsesToAST`add(3, 4, 5);${"should support a function call"}ExpressionStatement
   FunctionCall
     callee:
       VariableExpression add
