@@ -1,0 +1,16 @@
+fun counter_factory () {
+    var count = 0;
+
+    fun increment() {
+        count = count + 1;
+        print count;
+    }
+
+    return increment;
+}
+
+var incrementer = counter_factory();
+
+incrementer();
+incrementer();
+incrementer();
