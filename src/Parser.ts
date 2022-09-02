@@ -170,11 +170,13 @@ export default class Parser {
   // gammar here is _slightly_ different than the one in the book.
   //
   // program        → declaration* EOF ;
-  // declaration    → funDecl
+  // declaration    → classDecl
+  //                | funDecl
   //                | varDecl
   //                | statement ;
-  // funDecl        → function ;
-  // function       → fun IDENTIFIER? "(" parameters? ")" block ;
+  // classDecl      → "class" IDENTIFIER "{" function* "}" ;
+  // funDecl        → fun function ;
+  // function       → IDENTIFIER? "(" parameters? ")" block ;
   // parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
   // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
