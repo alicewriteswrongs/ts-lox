@@ -14,6 +14,7 @@ import {
 } from "./Expr.ts";
 import {
   createBlockStmt,
+  createClassStmt,
   createExpressionStmt,
   createFunctionStmt,
   createIfStmt,
@@ -21,6 +22,7 @@ import {
   createReturnStmt,
   createVarStmt,
   createWhileStmt,
+  FunctionStmt,
 } from "./Stmt.ts";
 import { Stmt } from "./Stmt.ts";
 import { BINARY_OPERATORS, Token, TokenType } from "./Token.ts";
@@ -219,6 +221,9 @@ export default class Parser {
    */
   declaration() {
     try {
+      if (this.match(TokenType.CLASS)) {
+        return this.classDeclaration();
+      }
       if (this.match(TokenType.FUN) && this.check(TokenType.IDENTIFIER)) {
         return this.function("function");
       }
@@ -229,6 +234,27 @@ export default class Parser {
     } catch (_err) {
       this.synchronize();
     }
+  }
+
+  /**
+   * classDecl → "class" IDENTIFIER "{" function* "}" ;
+   */
+  classDeclaration() {
+    const name: Token = this.consume(
+      TokenType.IDENTIFIER,
+      "Expect a class to have a name",
+    );
+    this.consume(TokenType.LEFT_BRACE, "Expect '{' before a class body");
+
+    const methods: FunctionStmt[] = [];
+
+    while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+      methods.push(this.function("method"));
+    }
+
+    this.consume(TokenType.RIGHT_BRACE, "Expect '}' after class body");
+
+    return createClassStmt(name, methods);
   }
 
   /**
@@ -427,7 +453,7 @@ export default class Parser {
   /**
    * function → IDENTIFIER "(" parameters? ")" block ;  *
    */
-  function(kind: "function" | "method"): Stmt {
+  function(kind: "function" | "method"): FunctionStmt {
     const name = this.consume(TokenType.IDENTIFIER, `Expect ${kind} name.`);
 
     return createFunctionStmt(name, this.functionBody(kind));

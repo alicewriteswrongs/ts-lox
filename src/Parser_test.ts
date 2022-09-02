@@ -145,6 +145,15 @@ testParsesToAST`fun myfun(argOne) {
     PrintStatement
       VariableExpression argOne`;
 
+testParsesToAST`class Breakfast {
+   eat (foo) {
+   }
+}${"should parse a simple class"}ClassDeclaration Breakfast
+  FunctionDeclaration eat
+    Parameters
+      foo
+    Body`;
+
 test("should error on trailing comma in function args", () => {
   const { parser, logStub } = testParsing("call(3, 4,);");
   parser.parse();

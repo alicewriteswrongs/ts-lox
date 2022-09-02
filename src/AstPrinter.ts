@@ -123,6 +123,15 @@ export function printAST(ast: AST, nesting = "") {
         }
         break;
       }
+      case "ClassStmt": {
+        const { name, methods } = stmt;
+
+        lines.push(nesting + "ClassDeclaration " + name.lexeme);
+        for (const func of methods) {
+          printStatementNode(func, nesting + "  ");
+        }
+        break;
+      }
       default:
         assertUnreachable(stmt);
     }
