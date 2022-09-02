@@ -1,10 +1,11 @@
 import { Environment } from "./Environment.ts";
 import { Expr, FunctionExpr } from "./Expr.ts";
 import { interpretBlockStmt } from "./Interpreter.ts";
+import { LoxClass } from "./LoxClass.ts";
 import { Return } from "./Return.ts";
 import { Token } from "./Token.ts";
 
-interface LoxCallable {
+export interface LoxCallable {
   call: (environment: Environment, args: any[]) => null;
   arity: () => number;
 }
@@ -91,6 +92,9 @@ export function isLoxCallable(
     return true;
   }
   if (maybeCallable instanceof NativeFunction) {
+    return true;
+  }
+  if (maybeCallable instanceof LoxClass) {
     return true;
   }
   return false;

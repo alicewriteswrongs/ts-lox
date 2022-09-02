@@ -12,6 +12,9 @@ export class Environment {
     this.values = new Map();
   }
 
+  /**
+   * Define a variable, setting it in the current environment
+   */
   define(name: string, value: any) {
     this.values.set(name, value);
   }
@@ -28,6 +31,12 @@ export class Environment {
     throw new RuntimeError(name, `Undefined variable "${name.lexeme}".`);
   }
 
+  /**
+   * assign to a variable by name
+   *
+   * this variable could be defined in the current environment or in and
+   * ancestor environment. If it's not defined here we walk up the tree.
+   */
   assign(name: Token, value: any) {
     if (this.values.has(name.lexeme)) {
       this.define(name.lexeme, value);
