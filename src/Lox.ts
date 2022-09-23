@@ -1,4 +1,5 @@
 #!/usr/bin/env -S deno run --allow-read
+import { parse } from "https://deno.land/std/flags/mod.ts"
 import { printAST } from "./AstPrinter.ts";
 import { Environment } from "./Environment.ts";
 import { GlobalEnvironment } from "./Global.ts";
@@ -11,13 +12,24 @@ export class Lox {
   hadError = false;
   hadRuntimeError = false;
 
+  printAST = false;
+
   main() {
-    const args = Deno.args;
-    if (args.length > 1) {
+    const args = parse(Deno.args, {
+      // this option causes the implementation to pretty-print the AST
+      // for each line entered into the REPL
+      boolean: ["printAST"]
+    });
+
+    if (args.printAST) {
+      this.printAST = true
+    }
+
+    if (args._.length > 1) {
       console.log("Usage: tslox [script]");
       Deno.exit(64);
-    } else if (args.length === 1) {
-      this.runFile(args[0]);
+    } else if (args._.length === 1) {
+      this.runFile(args._[0]);
     } else {
       this.runPrompt();
     }
@@ -67,7 +79,9 @@ export class Lox {
   repl(source: string, environment: Environment) {
     const statements = this.parseSource(source);
 
-    console.log(printAST(statements ?? []));
+    if (this.printAST) {
+      console.log(printAST(statements ?? []));
+    }
 
     if (statements[0] && statements[0].nodeType === "ExpressionStmt") {
       const { expression } = statements[0];
