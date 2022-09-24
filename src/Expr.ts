@@ -122,6 +122,32 @@ export function createCall(
   return newCall;
 }
 
+export interface Get {
+  object: Expr;
+  name: Token;
+  nodeType: "Get";
+}
+
+/**
+ * Factory function for creating a Get record
+ *
+ * Arguments:
+ * @param object Expr
+ * @param name Token
+ * @returns a Get node
+ */
+export function createGet(
+  object: Expr,
+  name: Token,
+): Get {
+  const newGet: Get = {
+    object,
+    name,
+    nodeType: "Get",
+  };
+  return newGet;
+}
+
 export interface Grouping {
   expression: Expr;
   nodeType: "Grouping";
@@ -194,6 +220,36 @@ export function createLogical(
     nodeType: "Logical",
   };
   return newLogical;
+}
+
+export interface Set {
+  object: Expr;
+  name: Token;
+  value: Expr;
+  nodeType: "Set";
+}
+
+/**
+ * Factory function for creating a Set record
+ *
+ * Arguments:
+ * @param object Expr
+ * @param name Token
+ * @param value Expr
+ * @returns a Set node
+ */
+export function createSet(
+  object: Expr,
+  name: Token,
+  value: Expr,
+): Set {
+  const newSet: Set = {
+    object,
+    name,
+    value,
+    nodeType: "Set",
+  };
+  return newSet;
 }
 
 export interface Unary {
@@ -275,9 +331,11 @@ export type Expr =
   | Ternary
   | Binary
   | Call
+  | Get
   | Grouping
   | Literal
   | Logical
+  | Set
   | Unary
   | Variable
   | FunctionExpr;
@@ -288,9 +346,11 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Ternary",
     "Binary",
     "Call",
+    "Get",
     "Grouping",
     "Literal",
     "Logical",
+    "Set",
     "Unary",
     "Variable",
     "FunctionExpr",

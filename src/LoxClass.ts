@@ -1,5 +1,7 @@
 import { Environment } from "./Environment.ts";
 import { LoxCallable } from "./LoxCallable.ts";
+import { RuntimeError } from "./RuntimeError.ts";
+import { Token } from "./Token.ts";
 
 export class LoxClass implements LoxCallable {
   name: string;
@@ -21,11 +23,23 @@ export class LoxClass implements LoxCallable {
   }
 }
 
-class LoxInstance {
+export class LoxInstance {
   klass: LoxClass;
+  fields = new Map();
 
   constructor(klass: LoxClass) {
     this.klass = klass;
+  }
+
+  get(name: Token) {
+    if (this.fields.has(name.lexeme)) {
+      return this.fields.get(name.lexeme);
+    }
+
+    throw new RuntimeError(
+      name,
+      `Undefined property ${name.lexeme}`,
+    );
   }
 
   toString(): string {

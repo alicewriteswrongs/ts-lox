@@ -214,6 +214,24 @@ export function printAST(ast: AST, nesting = "") {
         );
         break;
       }
+      case "Get": {
+        const { object, name } = expr;
+
+        lines.push(nesting + "PropertyAccess");
+        lines.push(
+          nesting + "  Accessing " + name.lexeme + " on " + object.nodeType,
+        );
+        break;
+      }
+      case "Set": {
+        const { object, name } = expr;
+
+        lines.push(nesting + "SetExpession");
+        lines.push(
+          nesting + "  Settings " + name.lexeme + " on " + object.nodeType,
+        );
+        break;
+      }
       default:
         assertUnreachable(expr);
     }

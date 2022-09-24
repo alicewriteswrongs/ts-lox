@@ -3,9 +3,11 @@ import {
   createBinary,
   createCall,
   createFunctionExpr,
+  createGet,
   createGrouping,
   createLiteral,
   createLogical,
+  createSet,
   createTernary,
   createUnary,
   createVariable,
@@ -198,7 +200,7 @@ export default class Parser {
   // whileStmt      → "while" "(" expression ")" statement ;
   // block          → "{" declaration "}" ;
   // expression     → assignment ("," assignment)* ;
-  // assignment     → IDENTIFIER "=" assignment
+  // assignment     → ( call "." )? IDENTIFIER "=" assignment
   //                | logic_or ;
   // logic_or       → logic_and ( "or" logic_and )* ;
   // logic_and      → ternary ( "and" ternary )* ;
@@ -208,8 +210,9 @@ export default class Parser {
   // term           → factor ( ( "-" | "+" ) factor )* ;
   // factor         → unary ( ( "/" | "*" ) unary )* ;
   // unary          → ( "!" | "-" ) unary | call ;
-  // call           → primary ( "(" arguments? ")" )* ;
+  // call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
   // primary        → NUMBER | STRING | "true" | "false" | "nil"
+  //                | IDENTIFIER
   //                | "(" expression ")"
   //                | function ;
   // arguments      → expression ( "," expression )* ;
@@ -545,6 +548,12 @@ export default class Parser {
           name,
           value,
         );
+      } else if (expr.nodeType === "Get") {
+        return createSet(
+          expr.object,
+          expr.name,
+          value
+        )
       }
       this.parserError(equals, "Invalid assignment target.");
     }
@@ -684,7 +693,7 @@ export default class Parser {
   }
 
   /**
-   * call → primary ( "(" arguments? ")" )* ;
+   * call → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
    */
   call(): Expr {
     let expr = this.primary();
@@ -692,6 +701,12 @@ export default class Parser {
     while (true) {
       if (this.match(TokenType.LEFT_PAREN)) {
         expr = this.finishCall(expr);
+      } else if (this.match(TokenType.DOT)) {
+        const name: Token = this.consume(
+          TokenType.IDENTIFIER,
+          "Expect property name after '.'.",
+        );
+        expr = createGet(expr, name);
       } else {
         break;
       }

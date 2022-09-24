@@ -5,6 +5,7 @@ import {
   Call,
   Expr,
   FunctionExpr,
+  Get,
   Logical,
   Ternary,
   Unary,
@@ -13,7 +14,7 @@ import {
 import { GlobalEnvironment } from "./Global.ts";
 import { LiteralValue } from "./Literal.ts";
 import { isLoxCallable, LoxFunction } from "./LoxCallable.ts";
-import { LoxClass } from "./LoxClass.ts";
+import { LoxClass, LoxInstance } from "./LoxClass.ts";
 import { Return } from "./Return.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import {
@@ -109,7 +110,6 @@ function interpretExpressionStmt(
   statement: ExpressionStmt,
   environment: Environment,
 ): void {
-  const _value = interpretExpression(statement.expression, environment);
   return;
 }
 
@@ -182,7 +182,7 @@ export function stringify(value: any) {
 export function interpretExpression(
   expr: Expr,
   env: Environment,
-): LiteralValue | LoxFunction {
+): LiteralValue | LoxFunction | LoxInstance {
   switch (expr.nodeType) {
     case "Assign":
       return interpretAssignExpression(expr, env);
@@ -204,6 +204,8 @@ export function interpretExpression(
       return interpretCall(expr, env);
     case "FunctionExpr":
       return interpretFuncExpr(expr, env);
+    case "Get":
+      return interpretGet(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -382,4 +384,12 @@ function interpretCall(expr: Call, environment: Environment) {
 
 function interpretFuncExpr(expr: FunctionExpr, environment: Environment) {
   return new LoxFunction(expr, environment);
+}
+
+function interpretGet(expr: Get, environment: Environment) {
+  const object = interpretExpression(expr.object, environment);
+
+  if (object instanceof LoxInstance) {
+    return object.get(expr.name);
+  }
 }
