@@ -7,7 +7,7 @@ import {
   createGrouping,
   createLiteral,
   createLogical,
-  createSet,
+  createSetExpr,
   createTernary,
   createUnary,
   createVariable,
@@ -549,11 +549,11 @@ export default class Parser {
           value,
         );
       } else if (expr.nodeType === "Get") {
-        return createSet(
+        return createSetExpr(
           expr.object,
           expr.name,
-          value
-        )
+          value,
+        );
       }
       this.parserError(equals, "Invalid assignment target.");
     }

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-unused-vars no-explicit-any
 import { Environment } from "./Environment.ts";
 import {
   Assign,
@@ -7,6 +8,7 @@ import {
   FunctionExpr,
   Get,
   Logical,
+  SetExpr,
   Ternary,
   Unary,
   Variable,
@@ -206,6 +208,8 @@ export function interpretExpression(
       return interpretFuncExpr(expr, env);
     case "Get":
       return interpretGet(expr, env);
+    case "SetExpr":
+      return interpretSet(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -234,7 +238,7 @@ function interpretUnary(expr: Unary, environment: Environment) {
  * simple definition of truthiness: if it's null or `false` then it's _not_ truthy,
  * else it is (so "", [], 0, 1, 2, 3, etc are all truthy)
  */
-function isTruthy(value: LiteralValue | LoxFunction): boolean {
+function isTruthy(value: LiteralValue | LoxFunction | LoxInstance): boolean {
   if (value === null) {
     return false;
   }
@@ -293,7 +297,10 @@ function interpretBinary(expr: Binary, environment: Environment): LiteralValue {
   throw new Error();
 }
 
-function isEqual(a: LiteralValue | LoxFunction, b: LiteralValue | LoxFunction) {
+function isEqual(
+  a: LiteralValue | LoxFunction | LoxInstance,
+  b: LiteralValue | LoxFunction | LoxInstance,
+) {
   if (a === null && b === null) {
     return true;
   }
@@ -392,4 +399,19 @@ function interpretGet(expr: Get, environment: Environment) {
   if (object instanceof LoxInstance) {
     return object.get(expr.name);
   }
+}
+
+function interpretSet(expr: SetExpr, environment: Environment) {
+  const object = interpretExpression(expr.object, environment);
+
+  if (!(object instanceof LoxInstance)) {
+    throw new RuntimeError(
+      expr.name,
+      "Only instances have fields.",
+    );
+  }
+
+  const value = interpretExpression(expr.value, environment);
+  object.set(expr.name, value);
+  return value;
 }

@@ -222,34 +222,34 @@ export function createLogical(
   return newLogical;
 }
 
-export interface Set {
+export interface SetExpr {
   object: Expr;
   name: Token;
   value: Expr;
-  nodeType: "Set";
+  nodeType: "SetExpr";
 }
 
 /**
- * Factory function for creating a Set record
+ * Factory function for creating a SetExpr record
  *
  * Arguments:
  * @param object Expr
  * @param name Token
  * @param value Expr
- * @returns a Set node
+ * @returns a SetExpr node
  */
-export function createSet(
+export function createSetExpr(
   object: Expr,
   name: Token,
   value: Expr,
-): Set {
-  const newSet: Set = {
+): SetExpr {
+  const newSetExpr: SetExpr = {
     object,
     name,
     value,
-    nodeType: "Set",
+    nodeType: "SetExpr",
   };
-  return newSet;
+  return newSetExpr;
 }
 
 export interface Unary {
@@ -335,7 +335,7 @@ export type Expr =
   | Grouping
   | Literal
   | Logical
-  | Set
+  | SetExpr
   | Unary
   | Variable
   | FunctionExpr;
@@ -350,7 +350,7 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Grouping",
     "Literal",
     "Logical",
-    "Set",
+    "SetExpr",
     "Unary",
     "Variable",
     "FunctionExpr",

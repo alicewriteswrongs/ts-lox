@@ -42,6 +42,10 @@ export class LoxInstance {
     );
   }
 
+  set(name: Token, value: any) {
+    this.fields.set(name.lexeme, value);
+  }
+
   toString(): string {
     return `${this.klass.name} instance`;
   }

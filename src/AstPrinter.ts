@@ -1,4 +1,4 @@
-import { Expr } from "./Expr.ts";
+import { Expr, Variable } from "./Expr.ts";
 import { Stmt } from "./Stmt.ts";
 import { TokenType } from "./Token.ts";
 import { assertUnreachable } from "./util.ts";
@@ -219,16 +219,18 @@ export function printAST(ast: AST, nesting = "") {
 
         lines.push(nesting + "PropertyAccess");
         lines.push(
-          nesting + "  Accessing " + name.lexeme + " on " + object.nodeType,
+          nesting + "  Accessing " + name.lexeme + " on " +
+            (object as Variable).name.lexeme,
         );
         break;
       }
-      case "Set": {
+      case "SetExpr": {
         const { object, name } = expr;
 
         lines.push(nesting + "SetExpession");
         lines.push(
-          nesting + "  Settings " + name.lexeme + " on " + object.nodeType,
+          nesting + "  Setting " + name.lexeme + " on " +
+            (object as Variable).name.lexeme,
         );
         break;
       }

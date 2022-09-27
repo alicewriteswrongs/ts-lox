@@ -16,7 +16,7 @@ function main() {
       "Grouping     -> expression: Expr",
       "Literal      -> value: LiteralValue",
       "Logical      -> left: Expr, operator: Token, right: Expr",
-      "Set          -> object: Expr, name: Token, value: Expr",
+      "SetExpr      -> object: Expr, name: Token, value: Expr",
       "Unary        -> operator: Token, right: Expr",
       "Variable     -> name: Token",
       "FunctionExpr -> params: Token[], body: Stmt[]",
