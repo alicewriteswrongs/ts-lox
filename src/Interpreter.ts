@@ -166,7 +166,7 @@ function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
   for (const method of stmt.methods) {
     const func = new LoxFunction(method.func, environment);
 
-    methods.set(stmt.name.lexeme, func)
+    methods.set(method.name.lexeme, func)
   }
 
   const klass = new LoxClass(stmt.name.lexeme, methods);
