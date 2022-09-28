@@ -161,12 +161,12 @@ function interpretReturnStatement(stmt: ReturnStmt, environment: Environment) {
 function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
   environment.define(stmt.name.lexeme, null);
 
-  const methods = new Map()
+  const methods = new Map();
 
   for (const method of stmt.methods) {
     const func = new LoxFunction(method.func, environment);
 
-    methods.set(method.name.lexeme, func)
+    methods.set(method.name.lexeme, func);
   }
 
   const klass = new LoxClass(stmt.name.lexeme, methods);

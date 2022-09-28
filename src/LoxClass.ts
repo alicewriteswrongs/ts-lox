@@ -10,7 +10,7 @@ export class LoxClass implements LoxCallable {
 
   constructor(name: string, methods: Methods) {
     this.name = name;
-    this.methods = methods
+    this.methods = methods;
   }
 
   toString(): string {
@@ -26,9 +26,8 @@ export class LoxClass implements LoxCallable {
   }
 
   findMethod(name: string): LoxFunction | null {
-    return this.methods.get(name) ?? null
+    return this.methods.get(name) ?? null;
   }
-
 }
 
 export class LoxInstance {
@@ -46,7 +45,7 @@ export class LoxInstance {
 
     const method = this.klass.findMethod(name.lexeme);
     if (method !== null) {
-      return method
+      return method;
     }
 
     throw new RuntimeError(

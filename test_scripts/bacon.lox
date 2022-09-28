@@ -3,7 +3,6 @@ class Bacon {
     print "Crunch crunch crunch!";
   }
 }
-// Prints "Crunch crunch crunch!".
-var bacon = Bacon();
 
-bacon.eat();
+// Prints "Crunch crunch crunch!".
+Bacon().eat();

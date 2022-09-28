@@ -103,7 +103,7 @@ export class Lox {
     const statements = this.parseSource(source);
 
     if (this.printAST) {
-      console.log(printAST(statements))
+      console.log(printAST(statements));
     }
 
     // interpret that expression and show the result
