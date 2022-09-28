@@ -9,6 +9,7 @@ import {
   createLogical,
   createSetExpr,
   createTernary,
+  createThis,
   createUnary,
   createVariable,
   Expr,
@@ -759,6 +760,10 @@ export default class Parser {
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
       return createLiteral(this.previous().literal);
+    }
+
+    if (this.match(TokenType.THIS)) {
+      return createThis(this.previous())
     }
 
     if (this.match(TokenType.IDENTIFIER)) {

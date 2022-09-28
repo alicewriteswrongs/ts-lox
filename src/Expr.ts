@@ -252,6 +252,28 @@ export function createSetExpr(
   return newSetExpr;
 }
 
+export interface This {
+  keyword: Token;
+  nodeType: "This";
+}
+
+/**
+ * Factory function for creating a This record
+ *
+ * Arguments:
+ * @param keyword Token
+ * @returns a This node
+ */
+export function createThis(
+  keyword: Token,
+): This {
+  const newThis: This = {
+    keyword,
+    nodeType: "This",
+  };
+  return newThis;
+}
+
 export interface Unary {
   operator: Token;
   right: Expr;
@@ -336,6 +358,7 @@ export type Expr =
   | Literal
   | Logical
   | SetExpr
+  | This
   | Unary
   | Variable
   | FunctionExpr;
@@ -351,6 +374,7 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Literal",
     "Logical",
     "SetExpr",
+    "This",
     "Unary",
     "Variable",
     "FunctionExpr",

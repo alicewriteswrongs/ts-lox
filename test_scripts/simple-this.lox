@@ -1,0 +1,10 @@
+class ThisPrinter {
+    print() {
+        print "it's simply: " + this.val;
+    }
+}
+
+var printer = ThisPrinter()
+printer.val = "excellent!";
+
+printer.print();
