@@ -51,7 +51,7 @@ export function printAST(ast: AST, nesting = "") {
       case "IfStmt": {
         const { condition, thenBranch, elseBranch } = stmt;
 
-        lines.push("IfStatement");
+        lines.push(nesting + "IfStatement");
         lines.push(nesting + "  Condition");
         printExpressionNode(condition, nesting + "    ");
         lines.push(nesting + "  ThenBranch");
@@ -219,7 +219,7 @@ export function printAST(ast: AST, nesting = "") {
 
         lines.push(nesting + "PropertyAccess");
 
-        const objectName = `${object.nodeType}: ${object.name?.lexeme || "unknown" }`
+        const objectName = `${object.nodeType}: ${(object as Variable).name?.lexeme || "unknown" }`
 
         lines.push(
           nesting + "  Accessing " + name.lexeme + " on " + objectName
