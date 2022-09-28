@@ -218,9 +218,11 @@ export function printAST(ast: AST, nesting = "") {
         const { object, name } = expr;
 
         lines.push(nesting + "PropertyAccess");
+
+        const objectName = `${object.nodeType}: ${object.name?.lexeme || "unknown" }`
+
         lines.push(
-          nesting + "  Accessing " + name.lexeme + " on " +
-              (object as Variable).name?.lexeme ?? "object",
+          nesting + "  Accessing " + name.lexeme + " on " + objectName
         );
         break;
       }
