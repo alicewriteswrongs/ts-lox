@@ -112,6 +112,7 @@ function interpretExpressionStmt(
   statement: ExpressionStmt,
   environment: Environment,
 ): void {
+  const _value = interpretExpression(statement.expression, environment);
   return;
 }
 
