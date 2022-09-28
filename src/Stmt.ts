@@ -1,4 +1,4 @@
-import { FunctionExpr } from "./Expr.ts";
+import { Expr, FunctionExpr } from "./Expr.ts";
 import { Token } from "./Token.ts";
 
 export interface BlockStmt {

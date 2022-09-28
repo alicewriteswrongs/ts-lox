@@ -102,6 +102,10 @@ export class Lox {
   run(source: string) {
     const statements = this.parseSource(source);
 
+    if (this.printAST) {
+      console.log(printAST(statements))
+    }
+
     // interpret that expression and show the result
     if (statements) {
       interpret(

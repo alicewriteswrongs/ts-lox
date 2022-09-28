@@ -220,7 +220,7 @@ export function printAST(ast: AST, nesting = "") {
         lines.push(nesting + "PropertyAccess");
         lines.push(
           nesting + "  Accessing " + name.lexeme + " on " +
-            (object as Variable).name.lexeme,
+            (object as Variable).name?.lexeme ?? "object"
         );
         break;
       }

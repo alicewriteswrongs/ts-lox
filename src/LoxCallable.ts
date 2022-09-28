@@ -81,7 +81,7 @@ export class LoxFunction implements LoxCallable {
   }
 
   toString() {
-    return `<fn ${this.declaration.name.lexeme}>`;
+    return `<fn ${this.name}>`;
   }
 }
 
