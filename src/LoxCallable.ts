@@ -42,13 +42,20 @@ export class LoxFunction implements LoxCallable {
   name?: Token;
   declaration: FunctionExpr;
   closure: Environment;
+  isInitializer: boolean;
 
-  constructor(declaration: FunctionExpr, closure: Environment, name?: Token) {
+  constructor(
+    declaration: FunctionExpr,
+    closure: Environment,
+    isInitializer: boolean,
+    name?: Token,
+  ) {
     if (name) {
       this.name = name;
     }
     this.declaration = declaration;
     this.closure = closure;
+    this.isInitializer = isInitializer;
   }
 
   call(_environment: Environment, args: any[]) {
@@ -73,6 +80,11 @@ export class LoxFunction implements LoxCallable {
         throw err;
       }
     }
+
+    if (this.isInitializer) {
+      return this.closure._get("this");
+    }
+
     return null;
   }
 
@@ -87,7 +99,12 @@ export class LoxFunction implements LoxCallable {
   bind(instance: LoxInstance) {
     const environment = new Environment(this.closure);
     environment.define("this", instance);
-    return new LoxFunction(this.declaration, environment);
+    return new LoxFunction(
+      this.declaration,
+      environment,
+      this.isInitializer,
+      this.name,
+    );
   }
 }
 

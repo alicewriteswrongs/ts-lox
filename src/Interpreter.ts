@@ -145,7 +145,7 @@ function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
 }
 
 function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
-  const func = new LoxFunction(stmt.func, environment, stmt.name);
+  const func = new LoxFunction(stmt.func, environment, false, stmt.name);
   environment.define(stmt.name.lexeme, func);
   return null;
 }
@@ -165,7 +165,12 @@ function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
   const methods = new Map();
 
   for (const method of stmt.methods) {
-    const func = new LoxFunction(method.func, environment);
+    const func = new LoxFunction(
+      method.func,
+      environment,
+      method.name.lexeme === "init",
+      method.name,
+    );
 
     methods.set(method.name.lexeme, func);
   }
@@ -403,7 +408,7 @@ function interpretCall(expr: Call, environment: Environment) {
 }
 
 function interpretFuncExpr(expr: FunctionExpr, environment: Environment) {
-  return new LoxFunction(expr, environment);
+  return new LoxFunction(expr, environment, false);
 }
 
 function interpretGet(expr: Get, environment: Environment) {

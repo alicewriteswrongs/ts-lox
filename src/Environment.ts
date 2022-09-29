@@ -31,6 +31,16 @@ export class Environment {
     throw new RuntimeError(name, `Undefined variable "${name.lexeme}".`);
   }
 
+  _get(name: string): any {
+    if (this.values.has(name)) {
+      return this.values.get(name);
+    }
+
+    if (this.enclosing !== null) {
+      return this.enclosing._get(name);
+    }
+  }
+
   /**
    * assign to a variable by name
    *

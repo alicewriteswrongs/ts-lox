@@ -17,12 +17,32 @@ export class LoxClass implements LoxCallable {
     return `Class ${this.name}`;
   }
 
+  /**
+   * Get the constructor, which is just a method named 'init'
+   */
+  getInit(): LoxFunction | null {
+    return this.findMethod("init");
+  }
+
   call(environment: Environment, args: any[]): any {
-    return new LoxInstance(this);
+    const instance = new LoxInstance(this);
+
+    const constructor = this.getInit();
+
+    if (constructor !== null) {
+      constructor.bind(instance).call(environment, args);
+    }
+
+    return instance;
   }
 
   arity() {
-    return 0;
+    const constructor = this.getInit();
+
+    if (constructor === null) {
+      return 0;
+    }
+    return constructor.arity();
   }
 
   findMethod(name: string): LoxFunction | null {
