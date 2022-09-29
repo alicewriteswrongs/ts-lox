@@ -25,7 +25,7 @@ export function createBlockStmt(
 
 export interface ClassStmt {
   name: Token;
-  methods: FunctionStmt[];
+  methods: (FunctionStmt | ClassMethodStmt)[];
   nodeType: "ClassStmt";
 }
 
@@ -34,12 +34,12 @@ export interface ClassStmt {
  *
  * Arguments:
  * @param name Token
- * @param methods FunctionStmt[]
+ * @param methods (FunctionStmt | ClassMethodStmt)[]
  * @returns a ClassStmt node
  */
 export function createClassStmt(
   name: Token,
-  methods: FunctionStmt[],
+  methods: (FunctionStmt | ClassMethodStmt)[],
 ): ClassStmt {
   const newClassStmt: ClassStmt = {
     name,
@@ -95,6 +95,32 @@ export function createFunctionStmt(
     nodeType: "FunctionStmt",
   };
   return newFunctionStmt;
+}
+
+export interface ClassMethodStmt {
+  name: Token;
+  func: FunctionExpr;
+  nodeType: "ClassMethodStmt";
+}
+
+/**
+ * Factory function for creating a ClassMethodStmt record
+ *
+ * Arguments:
+ * @param name Token
+ * @param func FunctionExpr
+ * @returns a ClassMethodStmt node
+ */
+export function createClassMethodStmt(
+  name: Token,
+  func: FunctionExpr,
+): ClassMethodStmt {
+  const newClassMethodStmt: ClassMethodStmt = {
+    name,
+    func,
+    nodeType: "ClassMethodStmt",
+  };
+  return newClassMethodStmt;
 }
 
 export interface IfStmt {
@@ -232,6 +258,7 @@ export type Stmt =
   | ClassStmt
   | ExpressionStmt
   | FunctionStmt
+  | ClassMethodStmt
   | IfStmt
   | PrintStmt
   | ReturnStmt
@@ -244,6 +271,7 @@ export function isStmt(ASTNode: Stmt | Expr): ASTNode is Stmt {
     "ClassStmt",
     "ExpressionStmt",
     "FunctionStmt",
+    "ClassMethodStmt",
     "IfStmt",
     "PrintStmt",
     "ReturnStmt",

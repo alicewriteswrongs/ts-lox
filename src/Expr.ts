@@ -1,6 +1,6 @@
-import { Token } from "./Token.ts";
 import { LiteralValue } from "./Literal.ts";
 import { Stmt } from "./Stmt.ts";
+import { Token } from "./Token.ts";
 
 export interface Assign {
   name: Token;

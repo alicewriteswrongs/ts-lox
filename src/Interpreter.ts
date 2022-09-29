@@ -21,6 +21,7 @@ import { LoxClass, LoxInstance } from "./LoxClass.ts";
 import { Return } from "./Return.ts";
 import { RuntimeError } from "./RuntimeError.ts";
 import {
+  ClassMethodStmt,
   ClassStmt,
   ExpressionStmt,
   FunctionStmt,
@@ -95,6 +96,9 @@ function execute(environment: Environment, statement: Stmt): Environment {
     case "ClassStmt":
       interpretClassStatement(statement, environment);
       return environment;
+    case "ClassMethodStmt":
+      interpretFuncStmt(statement, environment);
+      return environment;
     default:
       assertUnreachable(statement);
   }
@@ -144,7 +148,10 @@ function interpretWhileStmt(stmt: WhileStmt, environment: Environment) {
   }
 }
 
-function interpretFuncStmt(stmt: FunctionStmt, environment: Environment) {
+function interpretFuncStmt(
+  stmt: FunctionStmt | ClassMethodStmt,
+  environment: Environment,
+) {
   const func = new LoxFunction(stmt.func, environment, false, stmt.name);
   environment.define(stmt.name.lexeme, func);
   return null;
@@ -200,7 +207,7 @@ export function stringify(value: any) {
 export function interpretExpression(
   expr: Expr,
   env: Environment,
-): LiteralValue | LoxFunction | LoxInstance {
+): LiteralValue | LoxFunction | LoxInstance | LoxClass {
   switch (expr.nodeType) {
     case "Assign":
       return interpretAssignExpression(expr, env);
@@ -413,9 +420,12 @@ function interpretFuncExpr(expr: FunctionExpr, environment: Environment) {
 
 function interpretGet(expr: Get, environment: Environment) {
   const object = interpretExpression(expr.object, environment);
-
   if (object instanceof LoxInstance) {
     return object.get(expr.name);
+  }
+
+  if (object instanceof LoxClass) {
+    return object.metaclass.get(expr.name);
   }
 }
 

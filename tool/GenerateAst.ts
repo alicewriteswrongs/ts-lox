@@ -24,15 +24,16 @@ function main() {
     ]);
 
     defineAst(outputDir, "Stmt", [
-      "BlockStmt      -> statements: Stmt[]",
-      "ClassStmt      -> name: Token, methods: FunctionStmt[]",
-      "ExpressionStmt -> expression: Expr",
-      "FunctionStmt   -> name: Token, func: FunctionExpr",
-      "IfStmt         -> condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
-      "PrintStmt      -> expression: Expr",
-      "ReturnStmt     -> keyword: Token, value: Expr | null",
-      "VarStmt        -> name: Token, initializer?: Expr",
-      "WhileStmt      -> condition: Expr, body: Stmt",
+      "BlockStmt       -> statements: Stmt[]",
+      "ClassStmt       -> name: Token, methods: (FunctionStmt | ClassMethodStmt)[]",
+      "ExpressionStmt  -> expression: Expr",
+      "FunctionStmt    -> name: Token, func: FunctionExpr",
+      "ClassMethodStmt -> name: Token, func: FunctionExpr",
+      "IfStmt          -> condition: Expr, thenBranch: Stmt, elseBranch?: Stmt",
+      "PrintStmt       -> expression: Expr",
+      "ReturnStmt      -> keyword: Token, value: Expr | null",
+      "VarStmt         -> name: Token, initializer?: Expr",
+      "WhileStmt       -> condition: Expr, body: Stmt",
     ]);
   }
 }

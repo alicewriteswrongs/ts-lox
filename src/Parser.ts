@@ -16,7 +16,9 @@ import {
   FunctionExpr,
 } from "./Expr.ts";
 import {
+  ClassMethodStmt,
   createBlockStmt,
+  createClassMethodStmt,
   createClassStmt,
   createExpressionStmt,
   createFunctionStmt,
@@ -181,7 +183,7 @@ export default class Parser {
   //                | statement ;
   // classDecl      → "class" IDENTIFIER "{" function* "}" ;
   // funDecl        → fun function ;
-  // function       → IDENTIFIER? "(" parameters? ")" block ;
+  // function       → ("class")? IDENTIFIER? "(" parameters? ")" block ;
   // parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
   // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
   // statement      → exprStmt
@@ -250,7 +252,7 @@ export default class Parser {
     );
     this.consume(TokenType.LEFT_BRACE, "Expect '{' before a class body");
 
-    const methods: FunctionStmt[] = [];
+    const methods: (FunctionStmt | ClassMethodStmt)[] = [];
 
     while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
       methods.push(this.function("method"));
@@ -455,12 +457,19 @@ export default class Parser {
   }
 
   /**
-   * function → IDENTIFIER "(" parameters? ")" block ;  *
+   * function → "class"? IDENTIFIER "(" parameters? ")" block ;  *
    */
-  function(kind: "function" | "method"): FunctionStmt {
-    const name = this.consume(TokenType.IDENTIFIER, `Expect ${kind} name.`);
-
-    return createFunctionStmt(name, this.functionBody(kind));
+  function(kind: "function" | "method"): FunctionStmt | ClassMethodStmt {
+    if (this.match(TokenType.CLASS)) {
+      const name = this.consume(
+        TokenType.IDENTIFIER,
+        "Expect class method name.",
+      );
+      return createClassMethodStmt(name, this.functionBody(kind));
+    } else {
+      const name = this.consume(TokenType.IDENTIFIER, `Expect ${kind} name.`);
+      return createFunctionStmt(name, this.functionBody(kind));
+    }
   }
 
   functionBody(kind: "function" | "method"): FunctionExpr {

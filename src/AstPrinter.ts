@@ -132,6 +132,19 @@ export function printAST(ast: AST, nesting = "") {
         }
         break;
       }
+      case "ClassMethodStmt": {
+        const { name } = stmt;
+        const { body, params } = stmt.func;
+
+        lines.push(nesting + "ClassMethodDeclaration " + name.lexeme);
+        lines.push(nesting + "  Parameters");
+        params.forEach((token) => lines.push(nesting + "    " + token.lexeme));
+        lines.push(nesting + "  Body");
+        body.forEach((statement) =>
+          printStatementNode(statement, nesting + "    ")
+        );
+        break;
+      }
       default:
         assertUnreachable(stmt);
     }
