@@ -74,6 +74,10 @@ export class LoxFunction implements LoxCallable {
     } catch (err) {
       if (err instanceof Return) {
         // there was a return in the function, so we should grab the value and return it
+        if (this.isInitializer) {
+          return this.closure._get("this");
+        }
+
         return err.value;
       } else {
         // something else happened, rethrow
