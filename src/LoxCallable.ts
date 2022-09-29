@@ -1,7 +1,7 @@
 import { Environment } from "./Environment.ts";
 import { Expr, FunctionExpr } from "./Expr.ts";
 import { interpretBlockStmt } from "./Interpreter.ts";
-import { LoxClass } from "./LoxClass.ts";
+import { LoxClass, LoxInstance } from "./LoxClass.ts";
 import { Return } from "./Return.ts";
 import { Token } from "./Token.ts";
 
@@ -82,6 +82,12 @@ export class LoxFunction implements LoxCallable {
 
   toString() {
     return `<fn ${this.name}>`;
+  }
+
+  bind(instance: LoxInstance) {
+    const environment = new Environment(this.closure);
+    environment.define("this", instance);
+    return new LoxFunction(this.declaration, environment);
   }
 }
 

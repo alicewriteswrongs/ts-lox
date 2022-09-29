@@ -7,4 +7,4 @@ class ThisPrinter {
 var printer = ThisPrinter();
 printer.val = "excellent!";
 
-// printer.print();
+printer.printIt();

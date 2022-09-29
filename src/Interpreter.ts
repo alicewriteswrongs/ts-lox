@@ -10,6 +10,7 @@ import {
   Logical,
   SetExpr,
   Ternary,
+  This,
   Unary,
   Variable,
 } from "./Expr.ts";
@@ -220,6 +221,8 @@ export function interpretExpression(
       return interpretGet(expr, env);
     case "SetExpr":
       return interpretSet(expr, env);
+    case "This":
+      return interpretThis(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -424,4 +427,8 @@ function interpretSet(expr: SetExpr, environment: Environment) {
   const value = interpretExpression(expr.value, environment);
   object.set(expr.name, value);
   return value;
+}
+
+function interpretThis(expr: This, environment: Environment) {
+  return environment.get(expr.keyword);
 }

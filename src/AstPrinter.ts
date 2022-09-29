@@ -219,10 +219,12 @@ export function printAST(ast: AST, nesting = "") {
 
         lines.push(nesting + "PropertyAccess");
 
-        const objectName = `${object.nodeType}: ${(object as Variable).name?.lexeme || "unknown" }`
+        const objectName = `${object.nodeType}: ${
+          (object as Variable).name?.lexeme || "unknown"
+        }`;
 
         lines.push(
-          nesting + "  Accessing " + name.lexeme + " on " + objectName
+          nesting + "  Accessing " + name.lexeme + " on " + objectName,
         );
         break;
       }
@@ -234,6 +236,10 @@ export function printAST(ast: AST, nesting = "") {
           nesting + "  Setting " + name.lexeme + " on " +
             (object as Variable).name.lexeme,
         );
+        break;
+      }
+      case "This": {
+        lines.push(nesting + "ThisExpression");
         break;
       }
       default:
