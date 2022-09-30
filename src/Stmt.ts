@@ -1,4 +1,4 @@
-import { Expr, FunctionExpr } from "./Expr.ts";
+import { Expr, FunctionExpr, Variable } from "./Expr.ts";
 import { Token } from "./Token.ts";
 
 export interface BlockStmt {
@@ -25,6 +25,7 @@ export function createBlockStmt(
 
 export interface ClassStmt {
   name: Token;
+  superclass?: Variable;
   methods: (FunctionStmt | ClassMethodStmt)[];
   nodeType: "ClassStmt";
 }
@@ -34,15 +35,18 @@ export interface ClassStmt {
  *
  * Arguments:
  * @param name Token
+ * @param superclass? Variable
  * @param methods (FunctionStmt | ClassMethodStmt)[]
  * @returns a ClassStmt node
  */
 export function createClassStmt(
   name: Token,
+  superclass?: Variable,
   methods: (FunctionStmt | ClassMethodStmt)[],
 ): ClassStmt {
   const newClassStmt: ClassStmt = {
     name,
+    superclass,
     methods,
     nodeType: "ClassStmt",
   };

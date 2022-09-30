@@ -181,7 +181,7 @@ export default class Parser {
   //                | funDecl
   //                | varDecl
   //                | statement ;
-  // classDecl      → "class" IDENTIFIER "{" function* "}" ;
+  // classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
   // funDecl        → fun function ;
   // function       → ("class")? IDENTIFIER? "(" parameters? ")" block ;
   // parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
@@ -243,7 +243,7 @@ export default class Parser {
   }
 
   /**
-   * classDecl → "class" IDENTIFIER "{" function* "}" ;
+   * classDecl → "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
    */
   classDeclaration() {
     const name: Token = this.consume(
