@@ -14,6 +14,7 @@ import {
   createVariable,
   Expr,
   FunctionExpr,
+  Variable,
 } from "./Expr.ts";
 import {
   ClassMethodStmt,
@@ -250,6 +251,14 @@ export default class Parser {
       TokenType.IDENTIFIER,
       "Expect a class to have a name",
     );
+
+    let superclass: Variable | undefined;
+
+    if (this.match(TokenType.LESS)) {
+      this.consume(TokenType.IDENTIFIER, "Expect superclass name.");
+      superclass = createVariable(this.previous());
+    }
+
     this.consume(TokenType.LEFT_BRACE, "Expect '{' before a class body");
 
     const methods: (FunctionStmt | ClassMethodStmt)[] = [];
@@ -260,7 +269,7 @@ export default class Parser {
 
     this.consume(TokenType.RIGHT_BRACE, "Expect '}' after class body");
 
-    return createClassStmt(name, methods);
+    return createClassStmt(name, superclass, methods);
   }
 
   /**

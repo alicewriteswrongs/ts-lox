@@ -167,6 +167,18 @@ function interpretReturnStatement(stmt: ReturnStmt, environment: Environment) {
 }
 
 function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
+  let superclass = null;
+  if (stmt.superclass) {
+    superclass = interpretExpression(stmt.superclass, environment);
+
+    if (!(superclass instanceof LoxClass)) {
+      throw new RuntimeError(
+        stmt.superclass.name,
+        "Superclass must be a class.",
+      );
+    }
+  }
+
   environment.define(stmt.name.lexeme, null);
 
   const methods = new Map();
@@ -182,7 +194,7 @@ function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
     methods.set(method.name.lexeme, func);
   }
 
-  const klass = new LoxClass(stmt.name.lexeme, methods);
+  const klass = new LoxClass(stmt.name.lexeme, superclass, methods);
   environment.assign(stmt.name, klass);
   return null;
 }

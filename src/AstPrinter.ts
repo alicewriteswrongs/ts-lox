@@ -244,10 +244,13 @@ export function printAST(ast: AST, nesting = "") {
       case "SetExpr": {
         const { object, name } = expr;
 
+        const objectName = `${object.nodeType}: ${
+          (object as Variable).name?.lexeme || "unknown"
+        }`;
+
         lines.push(nesting + "SetExpession");
         lines.push(
-          nesting + "  Setting " + name.lexeme + " on " +
-            (object as Variable).name.lexeme,
+          nesting + "  Setting " + name.lexeme + " on " + objectName,
         );
         break;
       }

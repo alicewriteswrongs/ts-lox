@@ -41,11 +41,13 @@ export class LoxClass implements LoxCallable {
   name: string;
   methods: Methods;
   metaclass: LoxInstance;
+  superclass: LoxClass | null;
 
-  constructor(name: string, methods: Methods) {
+  constructor(name: string, superclass: LoxClass | null, methods: Methods) {
     this.name = name;
     this.methods = methods;
     this.metaclass = new LoxInstance(this);
+    this.superclass = superclass;
   }
 
   toString(): string {
@@ -81,6 +83,14 @@ export class LoxClass implements LoxCallable {
   }
 
   findMethod(name: string): LoxFunction | null {
-    return this.methods.get(name) ?? null;
+    if (this.methods.has(name)) {
+      return this.methods.get(name) ?? null;
+    }
+
+    if (this.superclass !== null) {
+      return this.superclass.findMethod(name);
+    }
+
+    return null;
   }
 }
