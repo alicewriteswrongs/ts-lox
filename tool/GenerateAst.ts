@@ -26,7 +26,7 @@ function main() {
 
     defineAst(outputDir, "Stmt", [
       "BlockStmt       -> statements: Stmt[]",
-      "ClassStmt       -> name: Token, superclass?: Variable, methods: (FunctionStmt | ClassMethodStmt)[]",
+      "ClassStmt       -> name: Token, methods: (FunctionStmt | ClassMethodStmt)[], superclass?: Variable",
       "ExpressionStmt  -> expression: Expr",
       "FunctionStmt    -> name: Token, func: FunctionExpr",
       "ClassMethodStmt -> name: Token, func: FunctionExpr",

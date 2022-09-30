@@ -25,8 +25,8 @@ export function createBlockStmt(
 
 export interface ClassStmt {
   name: Token;
-  superclass?: Variable;
   methods: (FunctionStmt | ClassMethodStmt)[];
+  superclass?: Variable;
   nodeType: "ClassStmt";
 }
 
@@ -35,19 +35,19 @@ export interface ClassStmt {
  *
  * Arguments:
  * @param name Token
- * @param superclass? Variable
  * @param methods (FunctionStmt | ClassMethodStmt)[]
+ * @param superclass? Variable
  * @returns a ClassStmt node
  */
 export function createClassStmt(
   name: Token,
-  superclass?: Variable,
   methods: (FunctionStmt | ClassMethodStmt)[],
+  superclass?: Variable,
 ): ClassStmt {
   const newClassStmt: ClassStmt = {
     name,
-    superclass,
     methods,
+    superclass,
     nodeType: "ClassStmt",
   };
   return newClassStmt;

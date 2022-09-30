@@ -271,7 +271,7 @@ export default class Parser {
 
     this.consume(TokenType.RIGHT_BRACE, "Expect '}' after class body");
 
-    return createClassStmt(name, superclass, methods);
+    return createClassStmt(name, methods, superclass);
   }
 
   /**
