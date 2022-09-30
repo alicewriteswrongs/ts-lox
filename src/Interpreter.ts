@@ -9,6 +9,7 @@ import {
   Get,
   Logical,
   SetExpr,
+  Super,
   Ternary,
   This,
   Unary,
@@ -169,20 +170,23 @@ function interpretReturnStatement(stmt: ReturnStmt, environment: Environment) {
 function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
   let superclass = null;
   if (stmt.superclass) {
+    environment = new Environment(environment);
     superclass = interpretExpression(stmt.superclass, environment);
-
     if (!(superclass instanceof LoxClass)) {
       throw new RuntimeError(
         stmt.superclass.name,
         "Superclass must be a class.",
       );
     }
+    // create a new environment with "super" bound to the superclass
+    environment.define("super", superclass);
   }
 
   environment.define(stmt.name.lexeme, null);
 
   const methods = new Map();
 
+  // create lox functions with the environment with "super" set it in
   for (const method of stmt.methods) {
     const func = new LoxFunction(
       method.func,
@@ -194,8 +198,12 @@ function interpretClassStatement(stmt: ClassStmt, environment: Environment) {
     methods.set(method.name.lexeme, func);
   }
 
+  if (superclass !== null) {
+    environment = environment.enclosing as Environment;
+  }
+
   const klass = new LoxClass(stmt.name.lexeme, superclass, methods);
-  environment.assign(stmt.name, klass);
+  environment.define(stmt.name.lexeme, klass);
   return null;
 }
 
@@ -247,6 +255,8 @@ export function interpretExpression(
       return interpretSet(expr, env);
     case "This":
       return interpretThis(expr, env);
+    case "Super":
+      return interpretSuper(expr, env);
     default:
       assertUnreachable(expr);
   }
@@ -275,7 +285,9 @@ function interpretUnary(expr: Unary, environment: Environment) {
  * simple definition of truthiness: if it's null or `false` then it's _not_ truthy,
  * else it is (so "", [], 0, 1, 2, 3, etc are all truthy)
  */
-function isTruthy(value: LiteralValue | LoxFunction | LoxInstance): boolean {
+function isTruthy(
+  value: LiteralValue | LoxFunction | LoxInstance | LoxClass,
+): boolean {
   if (value === null) {
     return false;
   }
@@ -458,4 +470,20 @@ function interpretSet(expr: SetExpr, environment: Environment) {
 
 function interpretThis(expr: This, environment: Environment) {
   return environment.get(expr.keyword);
+}
+
+function interpretSuper(expr: Super, environment: Environment) {
+  const superclass: LoxClass = environment._get("super");
+  const object: LoxInstance = environment._get("this");
+
+  const func = superclass.findMethod(expr.method.lexeme);
+
+  if (func == null) {
+    throw new RuntimeError(
+      expr.method,
+      "Undefined property '" + expr.method.lexeme + "'.",
+    );
+  }
+
+  return func.bind(object);
 }

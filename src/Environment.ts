@@ -28,7 +28,10 @@ export class Environment {
       return this.enclosing.get(name);
     }
 
-    throw new RuntimeError(name, `Undefined variable "${name.lexeme}".`);
+    throw new RuntimeError(
+      name,
+      `Cannot access undefined variable "${name.lexeme}".`,
+    );
   }
 
   _get(name: string): any {
@@ -55,6 +58,7 @@ export class Environment {
         this.enclosing.assign(name, value);
         return;
       }
+      console.trace();
       throw new RuntimeError(name, `Undefined variable "${name.lexeme}".`);
     }
   }

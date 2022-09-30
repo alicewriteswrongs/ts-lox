@@ -8,6 +8,7 @@ import {
   createLiteral,
   createLogical,
   createSetExpr,
+  createSuper,
   createTernary,
   createThis,
   createUnary,
@@ -218,6 +219,7 @@ export default class Parser {
   // primary        → NUMBER | STRING | "true" | "false" | "nil"
   //                | IDENTIFIER
   //                | "(" expression ")"
+  //                | "super" "." IDENTIFIER
   //                | function ;
   // arguments      → expression ( "," expression )* ;
   //                | IDENTIFIER ;
@@ -778,6 +780,16 @@ export default class Parser {
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
       return createLiteral(this.previous().literal);
+    }
+
+    if (this.match(TokenType.SUPER)) {
+      const keyword = this.previous();
+      this.consume(TokenType.DOT, "Expect '.' after 'super'.");
+      const method = this.consume(
+        TokenType.IDENTIFIER,
+        "Expect superclass method name.",
+      );
+      return createSuper(keyword, method);
     }
 
     if (this.match(TokenType.THIS)) {

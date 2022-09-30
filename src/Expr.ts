@@ -252,6 +252,32 @@ export function createSetExpr(
   return newSetExpr;
 }
 
+export interface Super {
+  keyword: Token;
+  method: Token;
+  nodeType: "Super";
+}
+
+/**
+ * Factory function for creating a Super record
+ *
+ * Arguments:
+ * @param keyword Token
+ * @param method Token
+ * @returns a Super node
+ */
+export function createSuper(
+  keyword: Token,
+  method: Token,
+): Super {
+  const newSuper: Super = {
+    keyword,
+    method,
+    nodeType: "Super",
+  };
+  return newSuper;
+}
+
 export interface This {
   keyword: Token;
   nodeType: "This";
@@ -358,6 +384,7 @@ export type Expr =
   | Literal
   | Logical
   | SetExpr
+  | Super
   | This
   | Unary
   | Variable
@@ -374,6 +401,7 @@ export function isExpr(ASTNode: Stmt | Expr): ASTNode is Expr {
     "Literal",
     "Logical",
     "SetExpr",
+    "Super",
     "This",
     "Unary",
     "Variable",
