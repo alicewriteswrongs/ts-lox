@@ -1,20 +1,14 @@
-#!/bin/bash
+default:
+    just --list
 
-function lint {
+lint:
     deno lint src tool
-}
 
-function run {
+run:
     deno run src/Lox.ts
-}
 
-function fmt {
+fmt:
     deno fmt src tool
-}
 
-function generate_ast {
+generate_ast: && fmt
     deno run --allow-write tool/GenerateAst.ts src
-    fmt
-}
-
-"$@"
